@@ -1,0 +1,34 @@
+.logo {
+    width: 300px;
+}
+
+.nav-item:hover{
+    background-color: #060043;
+}
+
+
+.form-check-inline{
+    width:500px;
+}
+
+.dropdown-item:hover {
+    background-color: #060043 !important;
+    
+}
+
+
+.custom:hover{
+    background: white;
+}
+
+@media (max-width: 1600px) {
+    .form-check-inline {
+        width: 300px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .form-check-inline {
+        width: 180px;
+    }
+}
