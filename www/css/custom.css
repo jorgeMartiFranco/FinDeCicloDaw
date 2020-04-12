@@ -13,13 +13,41 @@
 
 .dropdown-item:hover {
     background-color: #060043 !important;
+    color:white !important;
     
 }
 
+.dropdown-item {
+    color:#0a0069 !important;
+}
+
+
 
 .custom:hover{
-    background: white;
+    background: white !important;
 }
+
+
+#navPagina {
+ z-index:100 !important;
+}
+
+
+.dropdown>.dropdown-menu {
+    top: 200%;
+    transition: 0.3s all ease-in-out;
+  }
+  .dropdown:hover>.dropdown-menu {
+    display: block;
+    top: 100%;
+  }
+  
+  .dropdown>.dropdown-toggle:active {
+    /*Without this, clicking will make it sticky*/
+      pointer-events: none;
+  }
+
+
 
 @media (max-width: 1600px) {
     .form-check-inline {
@@ -27,8 +55,31 @@
     }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1100px) {
     .form-check-inline {
         width: 180px;
     }
+}
+
+@media (max-width: 990px) {
+    .form-check-inline {
+        width: 550px;
+    }
+
+    
+}
+
+@media (max-width: 600px) {
+    .form-check-inline {
+        width: 350px;
+    }
+
+    
+}
+@media (max-width: 400px) {
+    .form-check-inline {
+        width: 200px;
+    }
+
+    
 }

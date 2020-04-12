@@ -14,12 +14,11 @@ include "header.php";
 </div>
 </div>
 
-<div class="row position-sticky fixed-top">
-    <div class='col p-0'>
+
         <?php
         include "nav.php";
         ?>
-    </div>
+    
 
 
 <div class='row text-center mt-5'>
@@ -59,7 +58,7 @@ include "header.php";
         
 
 </div>
-<div class='row text-center mt-5'>
+<div class='row text-center mt-5 '>
 <div class='col'>
 <h1 class='text-secondary'>Agentes libres</h1></div>
 </div>
@@ -99,17 +98,19 @@ include "header.php";
 
 
 <div class='row mx-lg-5'>
-<div class='col-xl-8 col-lg-6 col-md-12 col-sm-12 mt-5'>
-    <h3 class='text-secondary'>Últimas noticias</h3>
+<div class='col-xl-8 col-lg-8 col-md-12 col-sm-12 mt-5'>
+    <h1 class='text-secondary'>Últimas noticias</h1>
     <?php
         cargarUltimasNoticias();
         ?>
 </div>
-<div class='col-xl-4 col-lg-6 col-md-12 col-sm-12 mt-5'>
+<div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 mt-5'>
 <a class="twitter-timeline" height="500" href="https://twitter.com/As_TomasRoncero?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">Tweets by TwitterDev</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
 </div>
 </div>
+</div>
+
 </div>
 <?php
 include "footer.html";

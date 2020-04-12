@@ -19,17 +19,16 @@ include "header.php";
 </div>
 
 
-            <div class="row position-sticky fixed-top">
-                <div class='col p-0'>
+            
         <?php
         include "nav.php";
         ?>
-        </div>
-</div>
+        
+
 
 <?php include "navCompeticionesPais.php"; ?>
 
-        <div class='row mt-5 mx-1 border-top border-right border-secondary'>
+        <div class='row mt-5 mx-1 '>
                     
             <div class='col'>
 
@@ -38,6 +37,8 @@ include "header.php";
             ?>
         </div>
         </div>
+
+</div>
 <?php
         include "footer.html";
         ?>

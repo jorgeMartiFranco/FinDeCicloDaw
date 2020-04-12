@@ -80,5 +80,25 @@ $(document).ready(function() {
     });
 
 
- 
+    var prevScrollpos = window.pageYOffset;
+    window.onscroll = function() {
+    var nav = document.getElementById("navPagina");
+    var currentScrollPos = window.pageYOffset;
+    if (prevScrollpos > currentScrollPos) {
+        nav.style.top = "0";
+        nav.style.position="sticky";
+    } else {
+        
+        nav.style.position="inherit";
+        nav.style.top="";
+    }
+  prevScrollpos = currentScrollPos;
+}
+
+     
+
+
 });
+
+
+

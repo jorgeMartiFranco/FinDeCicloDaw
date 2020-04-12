@@ -15,20 +15,13 @@ include "header.php";
 </div>
 
 
-    
-</div>
-
-
-            <div class="row position-sticky fixed-top">
-                <div class='col p-0'>
-        <?php
+   </div> 
+ <?php
         include "nav.php";
         ?>
-        </div>
        
-        
+      <?php include "navCompeticionesPais.php"; ?>
                 
-                <?php include "navCompeticionesPais.php"; ?>
                 <div class='row mt-5 mx-1'>
                     
                     <div class='col'>
@@ -44,8 +37,14 @@ include "header.php";
             <h3 class="text-secondary">Noticias de <?php echo $_GET["competicion"]?></h3>
             <?php
             }
+            else if(!isset($_GET["competicion"]) and !isset($_GET["pais"])){
             ?>
-            </div>
+            <h3 class="text-secondary">Noticias del mundo</h3>
+            <?php
+            }
+            ?>
+            
+            
              </div>
 
              <div class='row mx-1 border-top border-right border-secondary rounded'>
@@ -58,17 +57,22 @@ include "header.php";
              else if(isset($_GET["competicion"]) and !isset($_GET["pais"])){
                 cargarNoticiasCompeticion($_GET["competicion"]);
              }
+             else if(!isset($_GET["competicion"]) and !isset($_GET["pais"])){
+                cargarNoticiasGlobales();
+             }
+             
              ?>
             </div>
         
 
-        <?php
-        include "footer.html";
-        ?>
+       
             </div>
 
-
-            
+           
+            </div>
+            <?php
+        include "footer.html";
+        ?>
 
        
     

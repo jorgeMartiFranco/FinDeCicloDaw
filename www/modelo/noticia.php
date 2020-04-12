@@ -18,6 +18,14 @@ class Noticia {
      * @ORM\Column(type="string", name="Noticia")
      */
     private $noticia;
+    /**
+     * @ORM\Column(type="string", name="DescripcionImagen")
+     */
+    private $descripcionImagen;
+    /**
+     * @ORM\Column(type="date", name="Fecha")
+     */
+    private $fecha;
 
     /**
      * @ORM\ManyToOne(targetEntity="Competicion")
@@ -45,9 +53,15 @@ class Noticia {
         return $this->noticia;
     }
 
-    function getSeccion() {
-        return $this->seccion;
+    function getDescripcionImagen() {
+        return $this->descripcionImagen;
     }
+
+    function getFecha() {
+        return $this->fecha;
+    }
+
+   
 
     function getCompeticion() {
         return $this->competicion;
@@ -57,13 +71,18 @@ class Noticia {
         $this->titular = $titular;
     }
 
+    function setFecha($fecha) {
+        $this->fecha = $fecha;
+    }
+
     function setNoticia($noticia) {
         $this->noticia = $noticia;
     }
-
-    function setSeccion($seccion) {
-        $this->seccion = $seccion;
+    function setDescripcionImagen($descripcionImagen) {
+        $this->descripcionImagen = $descripcionImagen;
     }
+
+    
 
     function setCompeticion($competicion) {
         $this->competicion = $competicion;
