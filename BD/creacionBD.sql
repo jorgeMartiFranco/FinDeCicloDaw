@@ -1,407 +1,312 @@
 
-drop database if exists `mundo_balonmano`;
-CREATE DATABASE IF NOT EXISTS `mundo_balonmano` DEFAULT CHARACTER SET utf8 ;
+DROP SCHEMA IF EXISTS `mundo_balonmano` ;
+
+-- -----------------------------------------------------
+-- Schema mundo_balonmano
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mundo_balonmano` DEFAULT CHARACTER SET utf8 ;
 USE `mundo_balonmano` ;
 
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Paises`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Paises` ;
 
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Paises` (
-  `Id_Pais` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Codigo` VARCHAR(3) NOT NULL,
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`continentes`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`continentes` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`continentes` (
+  `Id_Continente` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`Id_Pais`),
-  UNIQUE INDEX `Codigo_UNIQUE` (`Codigo`))
+  PRIMARY KEY (`Id_Continente`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mundo_balonmano`.`Competiciones`
+-- Table `mundo_balonmano`.`paises`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Competiciones` ;
+DROP TABLE IF EXISTS `mundo_balonmano`.`paises` ;
 
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Continentes`(
-`Id_Continente` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-`Nombre` VARCHAR(45) NOT NULL,
-PRIMARY KEY(`Id_Continente`)
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`paises` (
+  `Id_Pais` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Codigo` VARCHAR(3) NOT NULL,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `Continente` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`Id_Pais`),
+  UNIQUE INDEX `Codigo_UNIQUE` (`Codigo` ASC),
+  INDEX `fk3_Continentes` (`Continente`),
+  CONSTRAINT `fk3_Continentes`
+  FOREIGN KEY (`Continente`)
+  REFERENCES `mundo_balonmano`.`continentes` (`Id_Continente`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE )
+  
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`autonomias` (
+  `Id_Autonomia` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `Pais` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`Id_Autonomia`),
+  INDEX `fk6_Paises` (`Pais`),
+  CONSTRAINT `fk6_Paises`
+  FOREIGN KEY (`Pais`)
+  REFERENCES `mundo_balonmano`.`paises` (`Id_Pais`)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE )
+  
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`clubs`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`clubs` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`clubs` (
+  `Id_Club` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Nombre_Completo` VARCHAR(60) NOT NULL,
+  `Nombre_Corto` VARCHAR(45) NULL,
+  `Pais` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`Id_Club`),
+  INDEX `fk2_Paises` (`Pais` ASC),
+  CONSTRAINT `fk2_Paises`
+    FOREIGN KEY (`Pais`)
+    REFERENCES `mundo_balonmano`.`paises` (`Id_Pais`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS tipos_competicion (
+Id_Tipo_Competicion INT UNSIGNED NOT NULL AUTO_INCREMENT,
+Tipo_Competicion VARCHAR(45) NOT NULL,
+Descripcion VARCHAR(128) NULL,
+PRIMARY KEY(Id_Tipo_Competicion)
 );
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`competiciones`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`competiciones` ;
 
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Competiciones` (
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`competiciones` (
   `Id_Competicion` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
   `Nivel` INT NOT NULL,
   `Pais` INT UNSIGNED NULL,
-  `Continente` INT UNSIGNED NOT NULL,
+  `Autonomia` INT UNSIGNED NULL,
+  `Continente` INT UNSIGNED NULL,
+  `Tipo_Competicion` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`Id_Competicion`),
-  INDEX `fk1_Paises` (`Pais`),
-  INDEX `fk1_Continentes` (`Continente`),
-  CONSTRAINT `fk1_Paises`
-    FOREIGN KEY (`Pais`)
-    REFERENCES `mundo_balonmano`.`Paises` (`Id_Pais`)
+  INDEX `fk1_Paises` (`Pais` ASC),
+  INDEX `fk1_Continentes` (`Continente` ASC),
+  INDEX `fk1_Tipo_Competicion`(`Tipo_Competicion`),
+  INDEX `fk1_Autonomias` (`Autonomia`),
+  CONSTRAINT `fk1_Autonomias`
+    FOREIGN KEY (`Autonomia`)
+    REFERENCES `mundo_balonmano`.`autonomias` (`Id_Autonomia`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-	CONSTRAINT `fk1_Continentes`
-    FOREIGN KEY (`Continente`)
-    REFERENCES `mundo_balonmano`.`Continentes` (`Id_Continente`)
+  CONSTRAINT `fk1_Paises`
+    FOREIGN KEY (`Pais`)
+    REFERENCES `mundo_balonmano`.`paises` (`Id_Pais`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE
-    )
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk1_Continentes`
+    FOREIGN KEY (`Continente`)
+    REFERENCES `mundo_balonmano`.`continentes` (`Id_Continente`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+    CONSTRAINT `fk1_Tipo_Competicion`
+    FOREIGN KEY (`Tipo_Competicion`)
+    REFERENCES `mundo_balonmano`.`tipos_competicion` (`Id_Tipo_Competicion`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`puestos_cuerpo_tecnico`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`puestos_cuerpo_tecnico` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`puestos_cuerpo_tecnico` (
+  `Id_Puesto_Cuerpo_Tecnico` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Puesto` VARCHAR(45) NOT NULL,
+  `Descripcion` VARCHAR(128) NULL DEFAULT NULL,
+  PRIMARY KEY (`Id_Puesto_Cuerpo_Tecnico`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`tipos_contrato`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`tipos_contrato` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`tipos_contrato` (
+  `Id_Tipo_Contrato` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Tipo_Contrato` VARCHAR(45) NOT NULL,
+  `Descripcion` VARCHAR(128) NULL DEFAULT NULL,
+  PRIMARY KEY (`Id_Tipo_Contrato`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`Tipos_Equipo`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`Tipos_Equipo` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Tipos_Equipo` (
+  `Id_Tipo_Equipo` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Tipo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Id_Tipo_Equipo`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mundo_balonmano`.`Clubs`
+-- Table `mundo_balonmano`.`equipos`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Clubs` ;
+DROP TABLE IF EXISTS `mundo_balonmano`.`equipos` ;
 
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Clubs` (
-  `Id_Club` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Nombre` VARCHAR(45) NOT NULL,
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`equipos` (
+  `Id_Equipo` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Club` INT UNSIGNED NOT NULL,
+  `Tipo_Equipo` INT UNSIGNED NOT NULL,
   `Competicion` INT UNSIGNED NOT NULL,
-  `Pais` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`Id_Club`),
-  INDEX `fk1_Competiciones` (`Competicion`),
-  INDEX `fk2_Paises` (`Pais`),
-  CONSTRAINT `fk1_Competiciones`
-    FOREIGN KEY (`Competicion`)
-    REFERENCES `mundo_balonmano`.`Competiciones` (`Id_Competicion`)
+  `Genero` ENUM('M','F') NOT NULL,
+  PRIMARY KEY (`Id_Equipo`),
+  INDEX `fk1_clubs` (`Club` ASC) ,
+  INDEX `fk1_Tipos_Equipo` (`Tipo_Equipo` ASC) ,
+  INDEX `fk4_Competiciones` (`Competicion` ASC) ,
+  CONSTRAINT `fk1_clubs`
+    FOREIGN KEY (`Club`)
+    REFERENCES `mundo_balonmano`.`clubs` (`Id_Club`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk1_Tipos_Equipo`
+    FOREIGN KEY (`Tipo_Equipo`)
+    REFERENCES `mundo_balonmano`.`Tipos_Equipo` (`Id_Tipo_Equipo`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk2_Paises`
-    FOREIGN KEY (`Pais`)
-    REFERENCES `mundo_balonmano`.`Paises` (`Id_Pais`)
+  CONSTRAINT `fk4_Competiciones`
+    FOREIGN KEY (`Competicion`)
+    REFERENCES `mundo_balonmano`.`competiciones` (`Id_Competicion`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mundo_balonmano`.`Puestos_Cuerpo_Tecnico`
+-- Table `mundo_balonmano`.`cuerpo_tecnico`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Puestos_Cuerpo_Tecnico` ;
+DROP TABLE IF EXISTS `mundo_balonmano`.`cuerpo_tecnico` ;
 
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Puestos_Cuerpo_Tecnico` (
-  `Id_Puesto_Cuerpo_Tecnico` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Puesto` VARCHAR(45) NOT NULL,
-  `Descripcion` VARCHAR(128) NULL,
-  PRIMARY KEY (`Id_Puesto_Cuerpo_Tecnico`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Tipos_Contrato`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Tipos_Contrato` ;
-
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Tipos_Contrato` (
-  `Id_Tipo_Contrato` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Tipo_Contrato` VARCHAR(45) NOT NULL,
-  `Descripcion` VARCHAR(128) NULL,
-  PRIMARY KEY (`Id_Tipo_Contrato`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Cuerpo_Tecnico`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Cuerpo_Tecnico` ;
-
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Cuerpo_Tecnico` (
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`cuerpo_tecnico` (
   `Id_Cuerpo_Tecnico` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
-  `Apellidos` VARCHAR(45) NOT NULL,
+  `Apellido1` VARCHAR(45) NOT NULL,
+  `Apellido2` VARCHAR(45) NULL,
+  `Apodo` VARCHAR(45) NULL,
   `Fecha_Nacimiento` DATE NOT NULL,
+  `Ultimo_Cambio_Equipo` DATETIME DEFAULT NOW(),
   `Pais` INT UNSIGNED NOT NULL,
-  `Club_Actual` INT UNSIGNED NOT NULL,
   `Puesto` INT UNSIGNED NOT NULL,
   `Tipo_Contrato` INT UNSIGNED NOT NULL,
+  `Equipo_Actual` INT UNSIGNED NULL,
   PRIMARY KEY (`Id_Cuerpo_Tecnico`),
-  INDEX `fk3_Paises` (`Pais`),
-  INDEX `fk1_Clubs` (`Club_Actual`),
-  INDEX `fk1_Puestos` (`Puesto`),
-  INDEX `fk1_Tipos_Contrato` (`Tipo_Contrato`),
-  CONSTRAINT `fk3_Paises`
-    FOREIGN KEY (`Pais`)
-    REFERENCES `mundo_balonmano`.`Paises` (`Id_Pais`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk1_Clubs`
-    FOREIGN KEY (`Club_Actual`)
-    REFERENCES `mundo_balonmano`.`Clubs` (`Id_Club`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
+  INDEX `fk3_Paises` (`Pais` ASC) ,
+  INDEX `fk1_Puestos` (`Puesto` ASC) ,
+  INDEX `fk1_Tipos_Contrato` (`Tipo_Contrato` ASC) ,
+  INDEX `fk2_Equipos` (`Equipo_Actual` ASC) ,
   CONSTRAINT `fk1_Puestos`
     FOREIGN KEY (`Puesto`)
-    REFERENCES `mundo_balonmano`.`Puestos_Cuerpo_Tecnico` (`Id_Puesto_Cuerpo_Tecnico`)
+    REFERENCES `mundo_balonmano`.`puestos_cuerpo_tecnico` (`Id_Puesto_Cuerpo_Tecnico`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk1_Tipos_Contrato`
     FOREIGN KEY (`Tipo_Contrato`)
-    REFERENCES `mundo_balonmano`.`Tipos_Contrato` (`Id_Tipo_Contrato`)
+    REFERENCES `mundo_balonmano`.`tipos_contrato` (`Id_Tipo_Contrato`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Puestos`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Puestos` ;
-
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Puestos` (
-  `Id_Puesto_Jugador` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Puesto` VARCHAR(45) NOT NULL,
-  `Descripcion` VARCHAR(128) NULL,
-  PRIMARY KEY (`Id_Puesto_Jugador`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Jugadores`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Jugadores` ;
-
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Jugadores` (
-  `Id_Jugador` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Nombre` VARCHAR(45) NOT NULL,
-  `Apellidos` VARCHAR(60) NOT NULL,
-  `Fecha_Nacimiento` DATE NOT NULL,
-  `Inicio_Contrato` DATE NULL,
-  `Fin_Contrato` DATE NULL,
-  `Pais` INT UNSIGNED NOT NULL,
-  `Club_Actual` INT UNSIGNED NOT NULL,
-  `Tipo_Contrato` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`Id_Jugador`),
-  INDEX `fk4_Paises` (`Pais`),
-  INDEX `fk2_Clubs` (`Club_Actual`),
-  INDEX `fk2_Tipos_Contrato` (`Tipo_Contrato`),
-  CONSTRAINT `fk4_Paises`
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk3_Paises`
     FOREIGN KEY (`Pais`)
-    REFERENCES `mundo_balonmano`.`Paises` (`Id_Pais`)
+    REFERENCES `mundo_balonmano`.`paises` (`Id_Pais`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk2_Clubs`
-    FOREIGN KEY (`Club_Actual`)
-    REFERENCES `mundo_balonmano`.`Clubs` (`Id_Club`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk2_Tipos_Contrato`
-    FOREIGN KEY (`Tipo_Contrato`)
-    REFERENCES `mundo_balonmano`.`Tipos_Contrato` (`Id_Tipo_Contrato`)
+  CONSTRAINT `fk2_Equipos`
+    FOREIGN KEY (`Equipo_Actual`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mundo_balonmano`.`Temporadas`
+-- Table `mundo_balonmano`.`temporadas`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Temporadas` ;
+DROP TABLE IF EXISTS `mundo_balonmano`.`temporadas` ;
 
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Temporadas` (
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`temporadas` (
   `Id_Temporada` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Temporada` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id_Temporada`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mundo_balonmano`.`Historico_Clubs_Jugadores`
+-- Table `mundo_balonmano`.`jugadores`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Historico_Clubs_Jugadores` ;
+DROP TABLE IF EXISTS `mundo_balonmano`.`jugadores` ;
 
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Historico_Clubs_Jugadores` (
-  `Id_Club_Jugador` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Jugador` INT UNSIGNED NOT NULL,
-  `Club` INT UNSIGNED NOT NULL,
-  `Temporada` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`Id_Club_Jugador`),
-  INDEX `fk1_Jugadores` (`Jugador`),
-  INDEX `fk3_Clubs` (`Club`),
-  INDEX `fk1_Temporadas` (`Temporada`),
-  CONSTRAINT `fk1_Jugadores`
-    FOREIGN KEY (`Jugador`)
-    REFERENCES `mundo_balonmano`.`Jugadores` (`Id_Jugador`)
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`jugadores` (
+  `Id_Jugador` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `Apellido1` VARCHAR(45) NOT NULL,
+  `Apellido2` VARCHAR(45) NULL,
+  `Apodo` VARCHAR(45) NULL,
+  `Fecha_Nacimiento` DATE NOT NULL,
+	`Genero` ENUM('M','F') NOT NULL,
+  `Inicio_Contrato` DATE NULL DEFAULT NULL,
+  `Fin_Contrato` DATE NULL DEFAULT NULL,
+  `Ultimo_Cambio_Equipo` DATETIME DEFAULT NOW(),
+  `Pais` INT UNSIGNED NOT NULL,
+  `Tipo_Contrato` INT UNSIGNED NOT NULL,
+  `Equipo_Actual` INT UNSIGNED NULL,
+  PRIMARY KEY (`Id_Jugador`),
+  INDEX `fk4_Paises` (`Pais` ASC) ,
+  INDEX `fk2_Tipos_Contrato` (`Tipo_Contrato` ASC) ,
+  INDEX `fk3_Equipos` (`Equipo_Actual` ASC) ,
+  CONSTRAINT `fk2_Tipos_Contrato`
+    FOREIGN KEY (`Tipo_Contrato`)
+    REFERENCES `mundo_balonmano`.`tipos_contrato` (`Id_Tipo_Contrato`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk3_Clubs`
-    FOREIGN KEY (`Club`)
-    REFERENCES `mundo_balonmano`.`Clubs` (`Id_Club`)
+  CONSTRAINT `fk4_Paises`
+    FOREIGN KEY (`Pais`)
+    REFERENCES `mundo_balonmano`.`paises` (`Id_Pais`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk1_Temporadas`
-    FOREIGN KEY (`Temporada`)
-    REFERENCES `mundo_balonmano`.`Temporadas` (`Id_Temporada`)
+  CONSTRAINT `fk3_Equipos`
+    FOREIGN KEY (`Equipo_Actual`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mundo_balonmano`.`Historico_Clubs_Cuerpo_Tecnico`
+-- Table `mundo_balonmano`.`estadisticas_jugadores`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Historico_Clubs_Cuerpo_Tecnico` ;
+DROP TABLE IF EXISTS `mundo_balonmano`.`estadisticas_jugadores` ;
 
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Historico_Clubs_Cuerpo_Tecnico` (
-  `Id_Club_Cuerpo_Tecnico` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Club` INT UNSIGNED NOT NULL,
-  `Temporada` INT UNSIGNED NOT NULL,
-  `Cuerpo_Tecnico` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`Id_Club_Cuerpo_Tecnico`),
-  INDEX `fk4_Clubs` (`Club`),
-  INDEX `fk2_Temporadas` (`Temporada`),
-  INDEX `fk1_Cuerpo_Tecnico` (`Cuerpo_Tecnico`),
-  CONSTRAINT `fk4_Clubs`
-    FOREIGN KEY (`Club`)
-    REFERENCES `mundo_balonmano`.`Clubs` (`Id_Club`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk2_Temporadas`
-    FOREIGN KEY (`Temporada`)
-    REFERENCES `mundo_balonmano`.`Temporadas` (`Id_Temporada`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk1_Cuerpo_Tecnico`
-    FOREIGN KEY (`Cuerpo_Tecnico`)
-    REFERENCES `mundo_balonmano`.`Cuerpo_Tecnico` (`Id_Cuerpo_Tecnico`)
-    ON DELETE CASCADE
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Historico_Club_Competicion`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Historico_Clubs_Competicion` ;
-
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Historico_Clubs_Competicion` (
-  `Id_Club_Competicion` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Club` INT UNSIGNED NOT NULL,
-  `Competicion` INT UNSIGNED NOT NULL,
-  `Temporada` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`Id_Club_Competicion`),
-  INDEX `fk5_Clubs` (`Club`),
-  INDEX `fk3_Competiciones` (`Competicion`),
-  INDEX `fk3_Temporadas` (`Temporada`),
-  CONSTRAINT `fk5_Clubs`
-    FOREIGN KEY (`Club`)
-    REFERENCES `mundo_balonmano`.`Clubs` (`Id_Club`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk3_Competiciones`
-    FOREIGN KEY (`Competicion`)
-    REFERENCES `mundo_balonmano`.`Competiciones` (`Id_Competicion`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk3_Temporadas`
-    FOREIGN KEY (`Temporada`)
-    REFERENCES `mundo_balonmano`.`Temporadas` (`Id_Temporada`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Historico_Fichajes_Jugadores`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Historico_Fichajes_Jugadores` ;
-
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Historico_Fichajes_Jugadores` (
-  `Id_Fichaje_Jugador` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Fecha_Inicio` DATE NOT NULL,
-  `Fecha_Fin` DATE NULL,
-  `Club_Emisor` INT UNSIGNED NOT NULL,
-  `Club_Receptor` INT UNSIGNED NOT NULL,
-  `Jugador` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`Id_Fichaje_Jugador`),
-  INDEX `fk6_Clubs` (`Club_Emisor`),
-  INDEX `fk7_Clubs` (`Club_Receptor`),
-  INDEX `fk2_Jugadores` (`Jugador`),
-  CONSTRAINT `fk6_Clubs`
-    FOREIGN KEY (`Club_Emisor`)
-    REFERENCES `mundo_balonmano`.`Clubs` (`Id_Club`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk7_Clubs`
-    FOREIGN KEY (`Club_Receptor`)
-    REFERENCES `mundo_balonmano`.`Clubs` (`Id_Club`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk2_Jugadores`
-    FOREIGN KEY (`Jugador`)
-    REFERENCES `mundo_balonmano`.`Jugadores` (`Id_Jugador`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Historico_Fichajes_Cuerpo_Tecnico`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Historico_Fichajes_Cuerpo_Tecnico` ;
-
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Historico_Fichajes_Cuerpo_Tecnico` (
-  `Id_Fichaje_Cuerpo_Tecnico` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Fecha_Inicio` DATE NOT NULL,
-  `Fecha_Fin` DATE NULL,
-  `Club_Emisor` INT UNSIGNED NOT NULL,
-  `Club_Receptor` INT UNSIGNED NOT NULL,
-  `Cuerpo_Tecnico` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`Id_Fichaje_Cuerpo_Tecnico`),
-  INDEX `fk8_Clubs` (`Club_Emisor`),
-  INDEX `fk9_Clubs` (`Club_Receptor`),
-  INDEX `fk2_Cuerpo_Tecnico` (`Cuerpo_Tecnico`),
-  CONSTRAINT `fk8_Clubs`
-    FOREIGN KEY (`Club_Emisor`)
-    REFERENCES `mundo_balonmano`.`Clubs` (`Id_Club`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk9_Clubs`
-    FOREIGN KEY (`Club_Receptor`)
-    REFERENCES `mundo_balonmano`.`Clubs` (`Id_Club`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk2_Cuerpo_Tecnico`
-    FOREIGN KEY (`Cuerpo_Tecnico`)
-    REFERENCES `mundo_balonmano`.`Cuerpo_Tecnico` (`Id_Cuerpo_Tecnico`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Jugadores_Puestos`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Jugadores_Puestos` ;
-
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Jugadores_Puestos` (
-  `Jugador` INT UNSIGNED NOT NULL,
-  `Puesto` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`Jugador`, `Puesto`),
-  INDEX `fk2_Puestos` (`Puesto`),
-  INDEX `fk4_Jugadores` (`Jugador`),
-  CONSTRAINT `fk4_Jugadores`
-    FOREIGN KEY (`Jugador`)
-    REFERENCES `mundo_balonmano`.`Jugadores` (`Id_Jugador`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk2_Puestos`
-    FOREIGN KEY (`Puesto`)
-    REFERENCES `mundo_balonmano`.`Puestos` (`Id_Puesto_Jugador`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mundo_balonmano`.`Estadisticas_Jugadores`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`Estadisticas_Jugadores` ;
-
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Estadisticas_Jugadores` (
-  `Id_Estadistica_Jugador` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`estadisticas_jugadores` (
+  `Id_Estadistica_Jugador` INT NOT NULL AUTO_INCREMENT,
   `Goles` INT NOT NULL,
   `Perdidas` INT NOT NULL,
   `Recuperaciones` INT NOT NULL,
@@ -409,24 +314,255 @@ CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`Estadisticas_Jugadores` (
   `Jugador` INT UNSIGNED NOT NULL,
   `Competicion` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`Id_Estadistica_Jugador`),
-  INDEX `fk4_Temporadas` (`Temporada`),
-  INDEX `fk5_Jugadores` (`Jugador`),
-  INDEX `fk3_Competicion` (`Competicion`),
+  INDEX `fk4_Temporadas` (`Temporada` ASC) ,
+  INDEX `fk5_Jugadores` (`Jugador` ASC) ,
+  INDEX `fk5_Competiciones` (`Competicion` ASC) ,
   CONSTRAINT `fk4_Temporadas`
     FOREIGN KEY (`Temporada`)
-    REFERENCES `mundo_balonmano`.`Temporadas` (`Id_Temporada`)
+    REFERENCES `mundo_balonmano`.`temporadas` (`Id_Temporada`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk5_Jugadores`
     FOREIGN KEY (`Jugador`)
-    REFERENCES `mundo_balonmano`.`Jugadores` (`Id_Jugador`)
+    REFERENCES `mundo_balonmano`.`jugadores` (`Id_Jugador`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-    CONSTRAINT `fk3_Competicion`
+  CONSTRAINT `fk5_Competiciones`
     FOREIGN KEY (`Competicion`)
-    REFERENCES `mundo_balonmano`.`Competiciones` (`Id_Competicion`)
+    REFERENCES `mundo_balonmano`.`competiciones` (`Id_Competicion`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`historico_clubs_competicion`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`historico_equipos_competicion` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`historico_equipos_competicion` (
+  `Id_Equipo_Competicion` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Competicion` INT UNSIGNED NOT NULL,
+  `Temporada` INT UNSIGNED NOT NULL,
+  `Equipo` INT UNSIGNED NOT NULL,
+  `Puesto_Final` VARCHAR(4) NULL,
+  PRIMARY KEY (`Id_Equipo_Competicion`),
+  INDEX `fk3_Competiciones` (`Competicion` ASC) ,
+  INDEX `fk3_Temporadas` (`Temporada` ASC) ,
+  INDEX `fk4_Equipos` (`Equipo` ASC) ,
+  CONSTRAINT `fk3_Competiciones`
+    FOREIGN KEY (`Competicion`)
+    REFERENCES `mundo_balonmano`.`competiciones` (`Id_Competicion`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk3_Temporadas`
+    FOREIGN KEY (`Temporada`)
+    REFERENCES `mundo_balonmano`.`temporadas` (`Id_Temporada`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk4_Equipos`
+    FOREIGN KEY (`Equipo`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`historico_clubs_cuerpo_tecnico`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`historico_equipos_cuerpo_tecnico` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`historico_equipos_cuerpo_tecnico` (
+  `Id_Equipo_Cuerpo_Tecnico` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Equipo` INT UNSIGNED NOT NULL,
+  `Temporada` INT UNSIGNED NOT NULL,
+  `Cuerpo_Tecnico` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`Id_Equipo_Cuerpo_Tecnico`),
+  INDEX `fk10_Equipos` (`Equipo` ASC) ,
+  INDEX `fk2_Temporadas` (`Temporada` ASC) ,
+  INDEX `fk1_Cuerpo_Tecnico` (`Cuerpo_Tecnico` ASC) ,
+  CONSTRAINT `fk1_Cuerpo_Tecnico`
+    FOREIGN KEY (`Cuerpo_Tecnico`)
+    REFERENCES `mundo_balonmano`.`cuerpo_tecnico` (`Id_Cuerpo_Tecnico`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
+  CONSTRAINT `fk2_Temporadas`
+    FOREIGN KEY (`Temporada`)
+    REFERENCES `mundo_balonmano`.`temporadas` (`Id_Temporada`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk10_Equipos`
+    FOREIGN KEY (`Equipo`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`historico_clubs_jugadores`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`historico_equipos_jugadores` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`historico_equipos_jugadores` (
+  `Id_Equipo_Jugador` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Jugador` INT UNSIGNED NOT NULL,
+  `Temporada` INT UNSIGNED NOT NULL,
+  `Equipo` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`Id_Equipo_Jugador`),
+  INDEX `fk1_Jugadores` (`Jugador` ASC) ,
+  INDEX `fk1_Temporadas` (`Temporada` ASC) ,
+  INDEX `fk5_Equipos` (`Equipo` ASC) ,
+  CONSTRAINT `fk1_Jugadores`
+    FOREIGN KEY (`Jugador`)
+    REFERENCES `mundo_balonmano`.`jugadores` (`Id_Jugador`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk1_Temporadas`
+    FOREIGN KEY (`Temporada`)
+    REFERENCES `mundo_balonmano`.`temporadas` (`Id_Temporada`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk5_Equipos`
+    FOREIGN KEY (`Equipo`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`historico_fichajes_cuerpo_tecnico`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`historico_fichajes_cuerpo_tecnico` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`historico_fichajes_cuerpo_tecnico` (
+  `Id_Fichaje_Cuerpo_Tecnico` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Fecha_Inicio` DATE NOT NULL,
+  `Fecha_Fin` DATE NULL DEFAULT NULL,
+  `Cuerpo_Tecnico` INT UNSIGNED NOT NULL,
+  `Equipo_Emisor` INT UNSIGNED NOT NULL,
+  `Equipo_Receptor` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`Id_Fichaje_Cuerpo_Tecnico`),
+  INDEX `fk2_Cuerpo_Tecnico` (`Cuerpo_Tecnico` ASC) ,
+  INDEX `fk6_Equipos` (`Equipo_Emisor` ASC) ,
+  INDEX `fk7_Equipos` (`Equipo_Receptor` ASC) ,
+  CONSTRAINT `fk2_Cuerpo_Tecnico`
+    FOREIGN KEY (`Cuerpo_Tecnico`)
+    REFERENCES `mundo_balonmano`.`cuerpo_tecnico` (`Id_Cuerpo_Tecnico`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk6_Equipos`
+    FOREIGN KEY (`Equipo_Emisor`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk7_Equipos`
+    FOREIGN KEY (`Equipo_Receptor`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`historico_fichajes_jugadores`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`historico_fichajes_jugadores` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`historico_fichajes_jugadores` (
+  `Id_Fichaje_Jugador` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Fecha_Inicio` DATE NOT NULL,
+  `Fecha_Fin` DATE NULL DEFAULT NULL,
+  `Jugador` INT UNSIGNED NOT NULL,
+  `Equipo_Emisor` INT UNSIGNED NOT NULL,
+  `Equipo_Receptor` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`Id_Fichaje_Jugador`),
+  INDEX `fk2_Jugadores` (`Jugador` ASC) ,
+  INDEX `fk8_Equipos` (`Equipo_Emisor` ASC) ,
+  INDEX `fk9_Equipos` (`Equipo_Receptor` ASC) ,
+  CONSTRAINT `fk2_Jugadores`
+    FOREIGN KEY (`Jugador`)
+    REFERENCES `mundo_balonmano`.`jugadores` (`Id_Jugador`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk8_Equipos`
+    FOREIGN KEY (`Equipo_Emisor`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk9_Equipos`
+    FOREIGN KEY (`Equipo_Receptor`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`puestos`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`puestos` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`puestos` (
+  `Id_Puesto_Jugador` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Puesto` VARCHAR(45) NOT NULL,
+  `Puesto_Corto` VARCHAR(4) NOT NULL,
+  `Descripcion` VARCHAR(128) NULL DEFAULT NULL,
+  PRIMARY KEY (`Id_Puesto_Jugador`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mundo_balonmano`.`jugadores_puestos`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mundo_balonmano`.`jugadores_puestos` ;
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`jugadores_puestos` (
+  `Jugador` INT UNSIGNED NOT NULL,
+  `Puesto` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`Jugador`, `Puesto`),
+  INDEX `fk2_Puestos` (`Puesto` ASC) ,
+  INDEX `fk4_Jugadores` (`Jugador` ASC) ,
+  CONSTRAINT `fk2_Puestos`
+    FOREIGN KEY (`Puesto`)
+    REFERENCES `mundo_balonmano`.`puestos` (`Id_Puesto_Jugador`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk4_Jugadores`
+    FOREIGN KEY (`Jugador`)
+    REFERENCES `mundo_balonmano`.`jugadores` (`Id_Jugador`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`noticias` (
+`Id_Noticia` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+`Titular` VARCHAR(128) NOT NULL,
+`Noticia` VARCHAR(1028) NOT NULL,
+`DescripcionImagen` VARCHAR(128) NULL,
+`Fecha` DATE NOT NULL DEFAULT DATE(NOW()),
+`Competicion` INT UNSIGNED NOT NULL,
+PRIMARY KEY(`Id_Noticia`),
+INDEX `fk10_Competicion` (`Competicion`),
+CONSTRAINT `fk10_Competicion`
+FOREIGN KEY (`Competicion`)
+REFERENCES `mundo_balonmano`.`competiciones` (`Id_Competicion`)
+ON DELETE CASCADE
+ON UPDATE CASCADE
+
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
