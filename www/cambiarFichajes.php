@@ -45,6 +45,8 @@ foreach($fichaje->getJugador()->getPuestos() as $puesto){
         $tipoB=$fichaje->getEquipoReceptor()->getTipoEquipo()->getTipo();
     }
     $arrayFichaje=[
+        "id"=>$fichaje->getJugador()->getId(),
+        "imagen"=>"<img src='img/jugadores/".$fichaje->getJugador()->getId()."mini.jpg'/>",
         "nombre"=> $fichaje->getJugador()->getNombre(),
         "apellido1"=>$fichaje->getJugador()->getApellido1(),
         "puestos"=>$puestos,

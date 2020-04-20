@@ -19,6 +19,10 @@ class Competicion {
      */
     private $nivel;
     /**
+     * @ORM\Column(type="integer", name="Reputacion")
+     */
+    private $reputacion;
+    /**
      * @ORM\ManyToOne(targetEntity="Pais")
      * @ORM\JoinColumn(name="Pais",referencedColumnName="Id_Pais")
      */
@@ -33,12 +37,18 @@ class Competicion {
      * @ORM\JoinColumn(name="Tipo_Competicion",referencedColumnName="Id_Tipo_Competicion")
      */
     private $tipoCompeticion;
+
+     /** @ORM\OneToMany(targetEntity="Equipo", mappedBy="competicion")
+     */
+    private $equipos;
     
-    function __construct($nombre, $nivel, $continente, $tipoCompeticion) {
+    function __construct($nombre, $nivel, $continente, $tipoCompeticion,$reputacion) {
         $this->nombre = $nombre;
         $this->nivel = $nivel;
         $this->continente = $continente;
         $this->tipoCompeticion = $tipoCompeticion;
+        $this->reputacion=$reputacion;
+        $this->equipos=new Doctrine\Common\Collections\ArrayCollection();
     }
     
     
@@ -66,6 +76,14 @@ class Competicion {
         return $this->tipoCompeticion;
     }
 
+    function getEquipos() {
+        return $this->equipos;
+    }
+
+    function getReputacion() {
+        return $this->reputacion;
+    }
+
     function setNombre($nombre) {
         $this->nombre = $nombre;
     }
@@ -84,6 +102,14 @@ class Competicion {
 
     function setTipoCompeticion($tipoCompeticion) {
         $this->tipoCompeticion = $tipoCompeticion;
+    }
+
+    function setReputacion($reputacion) {
+        $this->reputacion = $reputacion;
+    }
+
+    function setEquipos($equipos) {
+        $this->equipos = $equipos;
     }
 
 

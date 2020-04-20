@@ -13,7 +13,7 @@
       </li>
 
       <li class="nav-item dropdown mx-3" id="navNoticias">
-      <a class="nav-link text-white" href="noticias.php" >
+      <a class="nav-link text-white">
        <h5>Noticias</h5>
       </a>
       <div class="dropdown-menu bg-primary">
@@ -33,8 +33,14 @@
       <li class="nav-item mx-3">
         <a class="nav-link text-white" href="#"><h5>Entrenadores</h5></a>
       </li>
-      <li class="nav-item mx-3">
+      <li class="nav-item dropdown mx-3">
         <a class="nav-link text-white" href="#"><h5>Equipos</h5></a>
+        <div class="dropdown-menu bg-primary">
+        <form action="busqueda.php" method='POST'>
+        <button type='submit' class='dropdown-item py-2'><h6>Buscar equipos</h6></button>
+        <input type='hidden' name='equipos'>
+        </form>
+        </div>
       </li>
       
     </ul>
@@ -49,11 +55,19 @@
 </div>
 
 
-        <form action="search.php" method="POST" class="form-check-inline">
+        <form action="busqueda.php" method="POST" class="form-check-inline custom-check-form">
             
                 
             <input class="form-control p-2" placeholder="Buscar personas" type="text" name="persona">
-           
+            <input name='jugador' type='hidden'>
+            <input name='tecnico' type='hidden'>
+            <?php
+            cargarInputsHidden();
+            ?>
+            <input name='sinEquipo' type='hidden'>
+            <input name='conEquipo' type='hidden'>
+            <input name='masculino' type='hidden'>
+            <input name='femenino' type='hidden'>
             <button class="btn btn-secondary p-3" type="submit"><i class="fa fa-search fa-lg text-white" aria-hidden="true"></i></button>
 
         </form>

@@ -28,13 +28,15 @@ include "header.php";
 
             <?php
             if(isset($_GET["pais"]) and !isset($_GET["competicion"])){
+                cargarPais($_GET["pais"]);
             ?>
-            <h3 class="text-secondary">Noticias de <?php echo $_GET["pais"]?></h3>
+            
             <?php
             }
             else if(isset($_GET["competicion"]) and !isset($_GET["pais"])){
+                cargarCompeticion($_GET["competicion"]);
             ?>
-            <h3 class="text-secondary">Noticias de <?php echo $_GET["competicion"]?></h3>
+           
             <?php
             }
             else if(!isset($_GET["competicion"]) and !isset($_GET["pais"])){
@@ -47,7 +49,7 @@ include "header.php";
             
              </div>
 
-             <div class='row mx-1 border-top border-right border-secondary rounded'>
+            
             <?php
             
              if(isset($_GET["pais"]) and !isset($_GET["competicion"])){
@@ -62,7 +64,7 @@ include "header.php";
              }
              
              ?>
-            </div>
+           
         
 
        

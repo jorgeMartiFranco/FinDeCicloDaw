@@ -19,6 +19,10 @@ class Club {
      * @ORM\Column(type="string", name="Nombre_Corto")
      */
     private $nombreCorto;
+    /**
+     * @ORM\Column(type="string", name="Fundacion")
+     */
+    private $fundacion;
     
 
     /**
@@ -45,6 +49,10 @@ class Club {
         return $this->nombreCorto;
     }
 
+    function getFundacion() {
+        return $this->fundacion;
+    }
+
     function getPais() {
         return $this->pais;
     }
@@ -59,6 +67,10 @@ class Club {
 
     function setPais($pais) {
         $this->pais = $pais;
+    }
+
+    function setFundacion($fundacion) {
+        $this->fundacion = $fundacion;
     }
 
 

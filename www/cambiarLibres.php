@@ -37,6 +37,8 @@ foreach($libre->getPuestos() as $puesto){
 }
     
     $arrayLibre=[
+        "id"=>$libre->getId(),
+        "imagen"=>"<img src='img/jugadores/".$libre->getId()."mini.jpg'/>",
         "nombre"=> $libre->getNombre(),
         "apellido1"=>$libre->getApellido1(),
         "puestos"=>$puestos,

@@ -33,12 +33,29 @@ class Jugador {
      * @ORM\Column(type="string", name="Genero")
      */
     private $genero;
+
+    /**
+     * @ORM\Column(type="integer", name="Reputacion")
+     */
+    private $reputacion;
     
 
     /**
      * @ORM\Column(type="datetime", name="Ultimo_Cambio_Equipo")
      */
     private $ultimoCambioEquipo;
+    /**
+     * @ORM\Column(type="string", name="Twitter")
+     */
+    private $twitter;
+    /**
+     * @ORM\Column(type="string", name="Facebook")
+     */
+    private $facebook;
+    /**
+     * @ORM\Column(type="string", name="Instagram")
+     */
+    private $instagram;
     /**
      * @ORM\Column(type="date", name="Inicio_Contrato")
      */
@@ -70,13 +87,13 @@ class Jugador {
      */
     private $puestos; //array N:M
     
-    function __construct($nombre, $apellidos, $fechaNacimiento, $pais, $tipoContrato, $equipoActual) {
+    function __construct($nombre, $apellido1, $fechaNacimiento, $pais, $tipoContrato,$reputacion) {
         $this->nombre = $nombre;
-        $this->apellidos = $apellidos;
+        $this->apellido1 = $apellido1;
         $this->fechaNacimiento = $fechaNacimiento;
         $this->pais = $pais;
         $this->tipoContrato = $tipoContrato;
-        $this->equipoActual = $equipoActual;
+        $this->reputacion=$reputacion;
         $this->puestos=new Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -114,6 +131,10 @@ class Jugador {
 
     function getPais() {
         return $this->pais;
+    }
+
+    function getReputacion() {
+        return $this->reputacion;
     }
 
     function getTipoContrato() {
@@ -169,6 +190,34 @@ class Jugador {
 
     function setPuestos($puestos) {
         $this->puestos = $puestos;
+    }
+
+    function setTwitter($twitter) {
+        $this->twitter = $twitter;
+    }
+
+    function setFacebook($facebook) {
+        $this->facebook = $facebook;
+    }
+
+    function setInstagram($instagram) {
+        $this->instagram = $instagram;
+    }
+
+    function getTwitter() {
+        return $this->twitter;
+    }
+
+    function getFacebook() {
+        return $this->facebook;
+    }
+
+    function getInstagram() {
+        return $this->instagram;
+    }
+
+    function setReputacion($reputacion) {
+        $this->reputacion = $reputacion;
     }
 
 

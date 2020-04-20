@@ -13,6 +13,22 @@ class HistoricoEquipoCompeticion {
      * @ORM\Column(type="string", name="Puesto_Final")
      */
     private $puestoFinal;
+
+    /**
+     * @ORM\Column(type="integer", name="Ganados")
+     */
+    private $ganados;
+
+    /**
+     * @ORM\Column(type="integer", name="Empatados")
+     */
+    private $empatados;
+
+    /**
+     * @ORM\Column(type="integer", name="Perdidos")
+     */
+    private $perdidos;
+
     /**
      * @ORM\ManyToOne(targetEntity="Competicion")
      * @ORM\JoinColumn(name="Competicion",referencedColumnName="Id_Competicion")
@@ -51,6 +67,17 @@ class HistoricoEquipoCompeticion {
         return $this->temporada;
     }
 
+    function getGanados() {
+        return $this->ganados;
+    }
+
+    function getEmpatados() {
+        return $this->empatados;
+    }
+    function getPerdidos() {
+        return $this->perdidos;
+    }
+
     function getEquipo() {
         return $this->equipo;
     }
@@ -70,6 +97,17 @@ class HistoricoEquipoCompeticion {
     function setEquipo($equipo) {
         $this->equipo = $equipo;
     }
+
+    function setGanados($ganados) {
+        $this->ganados = $ganados;
+    }
+    function setEmpatados($empatados) {
+        $this->empatados = $empatados;
+    }
+    function setPerdidos($perdidos) {
+        $this->perdidos = $perdidos;
+    }
+
 
 
 

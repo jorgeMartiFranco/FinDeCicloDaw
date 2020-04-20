@@ -25,14 +25,38 @@ class CuerpoTecnico {
      * @ORM\Column(type="string", name="Apodo")
      */
     private $apodo;
+
+    /**
+     * @ORM\Column(type="string", name="Reputacion")
+     */
+    private $reputacion;
     /**
      * @ORM\Column(type="date", name="Fecha_Nacimiento")
      */
     private $fechaNacimiento;
+
+    /**
+     * @ORM\Column(type="string", name="Genero")
+     */
+    private $genero;
+
     /**
      * @ORM\Column(type="datetime", name="Ultimo_Cambio_Equipo")
      */
+    
     private $ultimoCambioEquipo;
+    /**
+     * @ORM\Column(type="string", name="Twitter")
+     */
+    private $twitter;
+    /**
+     * @ORM\Column(type="string", name="Facebook")
+     */
+    private $facebook;
+    /**
+     * @ORM\Column(type="string", name="Instagram")
+     */
+    private $instagram;
 
     /**
      * @ORM\ManyToOne(targetEntity="Pais")
@@ -56,9 +80,9 @@ class CuerpoTecnico {
     private $equipoActual;
     
     
-    function __construct($nombre, $apellidos, $fechaNacimiento, $pais, $puesto, $tipoContrato, $equipoActual) {
+    function __construct($nombre, $apellido1, $fechaNacimiento, $pais, $puesto, $tipoContrato, $equipoActual) {
         $this->nombre = $nombre;
-        $this->apellidos = $apellidos;
+        $this->apellido1 = $apellido1;
         $this->fechaNacimiento = $fechaNacimiento;
         $this->pais = $pais;
         $this->puesto = $puesto;
@@ -87,6 +111,10 @@ class CuerpoTecnico {
         return $this->apodo;
     }
 
+    function getReputacion() {
+        return $this->reputacion;
+    }
+
     function getFechaNacimiento() {
         return $this->fechaNacimiento;
     }
@@ -97,6 +125,10 @@ class CuerpoTecnico {
 
     function getPuesto() {
         return $this->puesto;
+    }
+
+    function getGenero() {
+        return $this->genero;
     }
 
     function getTipoContrato() {
@@ -123,6 +155,10 @@ class CuerpoTecnico {
         $this->apodo = $apodo;
     }
 
+    function setGenero($genero) {
+        $this->genero = $genero;
+    }
+
     function setFechaNacimiento($fechaNacimiento) {
         $this->fechaNacimiento = $fechaNacimiento;
     }
@@ -142,6 +178,36 @@ class CuerpoTecnico {
     function setEquipoActual($equipoActual) {
         $this->equipoActual = $equipoActual;
     }
+
+    function getTwitter() {
+        return $this->twitter;
+    }
+
+    function getFacebook() {
+        return $this->facebook;
+    }
+
+    function getInstagram() {
+        return $this->instagram;
+    }
+
+    function setTwitter($twitter) {
+        $this->twitter = $twitter;
+    }
+
+    function setFacebook($facebook) {
+        $this->facebook = $facebook;
+    }
+
+    function setInstagram($instagram) {
+        $this->instagram = $instagram;
+    }
+
+    function setReputacion($reputacion) {
+        $this->reputacion = $reputacion;
+    }
+
+
 
 
 }

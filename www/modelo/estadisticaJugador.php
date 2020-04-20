@@ -36,6 +36,12 @@ class EstadisticaJugador {
      * @ORM\JoinColumn(name="Competicion",referencedColumnName="Id_Competicion")
      */
     private $competicion;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Equipo")
+     * @ORM\JoinColumn(name="Equipo",referencedColumnName="Id_Equipo")
+     */
+    private $equipo;
     
     
     function __construct($goles, $perdidas, $recuperaciones, $temporada, $jugador, $competicion) {
@@ -76,6 +82,10 @@ class EstadisticaJugador {
         return $this->competicion;
     }
 
+    function getEquipo() {
+        return $this->equipo;
+    }
+
     function setGoles($goles) {
         $this->goles = $goles;
     }
@@ -98,6 +108,10 @@ class EstadisticaJugador {
 
     function setCompeticion($competicion) {
         $this->competicion = $competicion;
+    }
+
+    function setEquipo($equipo) {
+        $this->equipo = $equipo;
     }
 
 

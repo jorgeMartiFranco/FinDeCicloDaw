@@ -14,6 +14,15 @@ class Equipo {
      * @ORM\Column(type="string", name="Genero")
      */
     private $genero;
+    /**
+     * @ORM\Column(type="integer", name="Reputacion")
+     */
+    private $reputacion;
+
+    /**
+     * @ORM\Column(type="integer", name="Fecha_Sin_Entrenador")
+     */
+    private $fechaSinEntrenador;
 
     /**
      * @ORM\ManyToOne(targetEntity="Club")
@@ -30,11 +39,23 @@ class Equipo {
      * @ORM\JoinColumn(name="Competicion",referencedColumnName="Id_Competicion")
      */
     private $competicion;
+
+    /** @ORM\OneToMany(targetEntity="CuerpoTecnico", mappedBy="equipoActual")
+     */
+    private $cuerpoTecnico;
+
+     /** @ORM\OneToMany(targetEntity="Jugador", mappedBy="equipoActual")
+     */
+    private $jugadores;
+
     
-    function __construct($club, $tipoEquipo, $competicion) {
+    function __construct($club, $tipoEquipo, $competicion,$reputacion) {
         $this->club = $club;
         $this->tipoEquipo = $tipoEquipo;
         $this->competicion = $competicion;
+        $this->reputacion=$reputacion;
+        $this->cuerpoTecnico=new Doctrine\Common\Collections\ArrayCollection();
+        $this->jugadores=new Doctrine\Common\Collections\ArrayCollection();
     }
 
     
@@ -50,8 +71,24 @@ class Equipo {
         return $this->tipoEquipo;
     }
 
+    function getReputacion() {
+        return $this->reputacion;
+    }
+
     function getCompeticion() {
         return $this->competicion;
+    }
+
+    function getFechaSinEntrenador() {
+        return $this->fechaSinEntrenador;
+    }
+
+    function getJugadores() {
+        return $this->jugadores;
+    }
+
+    function getCuerpoTecnico() {
+        return $this->cuerpoTecnico;
     }
 
     function setClub($club) {
@@ -66,7 +103,22 @@ class Equipo {
         $this->competicion = $competicion;
     }
 
+    function setFechaSinEntrenador($fechaSinEntrenador) {
+        $this->fechaSinEntrenador = $fechaSinEntrenador;
+    }
 
+
+    function setReputacion($reputacion) {
+        $this->reputacion = $reputacion;
+    }
+
+    function setCuerpoTecnico($cuerpoTecnico) {
+        $this->cuerpoTecnico = $cuerpoTecnico;
+    }
+
+    function setJugadores($jugadores) {
+        $this->jugadores = $jugadores;
+    }
 }
 
 

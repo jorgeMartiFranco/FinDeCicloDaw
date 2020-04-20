@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`paises` (
   `Id_Pais` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Codigo` VARCHAR(3) NOT NULL,
   `Nombre` VARCHAR(45) NOT NULL,
+  `Nacionalidad` VARCHAR(64) NOT NULL,
   `Continente` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`Id_Pais`),
   UNIQUE INDEX `Codigo_UNIQUE` (`Codigo` ASC),
@@ -68,6 +69,7 @@ CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`clubs` (
   `Nombre_Completo` VARCHAR(60) NOT NULL,
   `Nombre_Corto` VARCHAR(45) NULL,
   `Pais` INT UNSIGNED NOT NULL,
+  `Fundacion` VARCHAR(4) NOT NULL,
   PRIMARY KEY (`Id_Club`),
   INDEX `fk2_Paises` (`Pais` ASC),
   CONSTRAINT `fk2_Paises`
@@ -94,6 +96,7 @@ CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`competiciones` (
   `Nombre` VARCHAR(45) NOT NULL,
   `Nivel` INT NOT NULL,
   `Pais` INT UNSIGNED NULL,
+  `Reputacion` INT NOT NULL,
   `Autonomia` INT UNSIGNED NULL,
   `Continente` INT UNSIGNED NULL,
   `Tipo_Competicion` INT UNSIGNED NOT NULL,
@@ -177,6 +180,8 @@ CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`equipos` (
   `Tipo_Equipo` INT UNSIGNED NOT NULL,
   `Competicion` INT UNSIGNED NOT NULL,
   `Genero` ENUM('M','F') NOT NULL,
+  `Reputacion` INT NOT NULL,
+  `Fecha_Sin_Entrenador` DATETIME NOT NULL DEFAULT NOW(),
   PRIMARY KEY (`Id_Equipo`),
   INDEX `fk1_clubs` (`Club` ASC) ,
   INDEX `fk1_Tipos_Equipo` (`Tipo_Equipo` ASC) ,
@@ -211,8 +216,13 @@ CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`cuerpo_tecnico` (
   `Apellido2` VARCHAR(45) NULL,
   `Apodo` VARCHAR(45) NULL,
   `Fecha_Nacimiento` DATE NOT NULL,
+  `Genero` ENUM('M','F') NOT NULL,
   `Ultimo_Cambio_Equipo` DATETIME DEFAULT NOW(),
+  `Twitter` VARCHAR(128) NULL,
+  `Facebook` VARCHAR(128) NULL,
+  `Instagram` VARCHAR(128) NULL,
   `Pais` INT UNSIGNED NOT NULL,
+  `Reputacion` INT NOT NULL,
   `Puesto` INT UNSIGNED NOT NULL,
   `Tipo_Contrato` INT UNSIGNED NOT NULL,
   `Equipo_Actual` INT UNSIGNED NULL,
@@ -271,9 +281,13 @@ CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`jugadores` (
   `Apodo` VARCHAR(45) NULL,
   `Fecha_Nacimiento` DATE NOT NULL,
 	`Genero` ENUM('M','F') NOT NULL,
+	`Reputacion` INT NOT NULL,
   `Inicio_Contrato` DATE NULL DEFAULT NULL,
   `Fin_Contrato` DATE NULL DEFAULT NULL,
   `Ultimo_Cambio_Equipo` DATETIME DEFAULT NOW(),
+  `Twitter` VARCHAR(128) NULL,
+  `Facebook` VARCHAR(128) NULL,
+  `Instagram` VARCHAR(128) NULL,
   `Pais` INT UNSIGNED NOT NULL,
   `Tipo_Contrato` INT UNSIGNED NOT NULL,
   `Equipo_Actual` INT UNSIGNED NULL,
@@ -313,10 +327,17 @@ CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`estadisticas_jugadores` (
   `Temporada` INT UNSIGNED NOT NULL,
   `Jugador` INT UNSIGNED NOT NULL,
   `Competicion` INT UNSIGNED NOT NULL,
+  `Equipo` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`Id_Estadistica_Jugador`),
   INDEX `fk4_Temporadas` (`Temporada` ASC) ,
   INDEX `fk5_Jugadores` (`Jugador` ASC) ,
   INDEX `fk5_Competiciones` (`Competicion` ASC) ,
+  INDEX `fk11_Equipos` (`Equipo` ASC) ,
+  CONSTRAINT `fk11_Equipos`
+    FOREIGN KEY (`Equipo`)
+    REFERENCES `mundo_balonmano`.`equipos` (`Id_Equipo`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
   CONSTRAINT `fk4_Temporadas`
     FOREIGN KEY (`Temporada`)
     REFERENCES `mundo_balonmano`.`temporadas` (`Id_Temporada`)
@@ -339,14 +360,17 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `mundo_balonmano`.`historico_clubs_competicion`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mundo_balonmano`.`historico_equipos_competicion` ;
+DROP TABLE IF EXISTS `mundo_balonmano`.`historico_equipos_competiciones` ;
 
-CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`historico_equipos_competicion` (
+CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`historico_equipos_competiciones` (
   `Id_Equipo_Competicion` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Competicion` INT UNSIGNED NOT NULL,
   `Temporada` INT UNSIGNED NOT NULL,
   `Equipo` INT UNSIGNED NOT NULL,
   `Puesto_Final` VARCHAR(4) NULL,
+  `Ganados` INT NOT NULL DEFAULT 0,
+  `Empatados` INT NOT NULL DEFAULT 0,
+  `Perdidos` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id_Equipo_Competicion`),
   INDEX `fk3_Competiciones` (`Competicion` ASC) ,
   INDEX `fk3_Temporadas` (`Temporada` ASC) ,
@@ -565,4 +589,5 @@ ON UPDATE CASCADE
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
 

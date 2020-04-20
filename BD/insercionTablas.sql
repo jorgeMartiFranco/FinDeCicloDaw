@@ -31,12 +31,12 @@ INSERT INTO `continentes` (`Id_Continente`, `Nombre`) VALUES
 (4, 'América'),
 (5, 'Oceanía');
 
-INSERT INTO `paises` (`Id_Pais`, `Codigo`, `Nombre`, `Continente`) VALUES
-(1, 'ES', 'España', 1),
-(2, 'FR', 'Francia', 1);
+INSERT INTO `paises` (`Id_Pais`, `Codigo`, `Nombre`, `Nacionalidad`, `Continente`) VALUES
+(1, 'ES', 'España','Española', 1),
+(2, 'FR', 'Francia','Francesa', 1);
 
-INSERT INTO `clubs` (`Id_Club`, `Nombre_Completo`, `Nombre_Corto`, `Pais`) VALUES
-(1, 'Acanor Atlético Novás', 'Acanor Novás', 1);
+INSERT INTO `clubs` (`Id_Club`, `Nombre_Completo`, `Nombre_Corto`, `Pais`,`Fundacion`) VALUES
+(1, 'Acanor Atlético Novás', 'Acanor Novás', 1,'1975');
 
 --
 -- Volcado de datos para la tabla `competiciones`
@@ -45,9 +45,9 @@ INSERT INTO `tipos_competicion` (`Id_Tipo_Competicion`, `Tipo_Competicion`, `Des
 (1, 'Liga Doméstica', NULL),
 (2, 'Copa Doméstica', NULL);
 
-INSERT INTO `competiciones` (`Id_Competicion`, `Nombre`, `Nivel`, `Pais`, `Continente`, `Tipo_Competicion`) VALUES
-(1, 'División De Honor Plata', 2, 1, NULL, 1),
-(2, '1ª Autonómica Galicia', 4, 1, NULL, 1);
+INSERT INTO `competiciones` (`Id_Competicion`, `Nombre`, `Nivel`, `Pais`, `Continente`, `Tipo_Competicion`,`Reputacion`) VALUES
+(1, 'División De Honor Plata', 2, 1, NULL, 1,120),
+(2, '1ª Autonómica Galicia', 4, 1, NULL, 1,10);
 
 --
 -- Volcado de datos para la tabla `continentes`
@@ -74,17 +74,17 @@ INSERT INTO `tipos_equipo` (`Id_Tipo_Equipo`, `Tipo`) VALUES
 (4, 'D'),
 (5, 'Juvenil');
 
-INSERT INTO `equipos` (`Id_Equipo`, `Club`, `Tipo_Equipo`, `Competicion`, `Genero`) VALUES
-(1, 1, 1, 1, 'M'),
-(2, 1, 2, 2, 'M');
+INSERT INTO `equipos` (`Id_Equipo`, `Club`, `Tipo_Equipo`, `Competicion`, `Genero`,`Reputacion`) VALUES
+(1, 1, 1, 1, 'M',120),
+(2, 1, 2, 2, 'M',10);
 
 INSERT INTO `tipos_contrato` (`Id_Tipo_Contrato`, `Tipo_Contrato`, `Descripcion`) VALUES
 (1, 'Profesional', 'Contrato a tiempo completo'),
 (2, 'Semiprofesional', 'Contrato a tiempo parcial'),
 (3, 'Amateur', 'Sin contrato');
 
-INSERT INTO `cuerpo_tecnico` (`Id_Cuerpo_Tecnico`, `Nombre`, `Apellido1`, `Apellido2`, `Apodo`, `Fecha_Nacimiento`, `Ultimo_Cambio_Equipo`, `Pais`, `Puesto`, `Tipo_Contrato`, `Equipo_Actual`) VALUES
-(1, 'César', 'Armán', 'Dorado', 'César Armán', '1992-08-12', '2020-04-10 20:57:12', 1, 1, 2, 2);
+INSERT INTO `cuerpo_tecnico` (`Id_Cuerpo_Tecnico`, `Nombre`, `Apellido1`, `Apellido2`, `Apodo`, `Fecha_Nacimiento`, `Ultimo_Cambio_Equipo`, `Pais`, `Puesto`, `Tipo_Contrato`, `Equipo_Actual`,`Reputacion`) VALUES
+(1, 'César', 'Armán', 'Dorado', 'César Armán', '1992-08-12', '2020-04-10 20:57:12', 1, 1, 2, 2,130);
 
 --
 -- Volcado de datos para la tabla `equipos`
@@ -118,8 +118,8 @@ INSERT INTO `puestos` (`Id_Puesto_Jugador`, `Puesto`, `Puesto_Corto`, `Descripci
 -- Volcado de datos para la tabla `jugadores_puestos`
 --
 
-INSERT INTO `estadisticas_jugadores` (`Id_Estadistica_Jugador`, `Goles`, `Perdidas`, `Recuperaciones`, `Temporada`, `Jugador`, `Competicion`) VALUES
-(1, 1, 0, 0, 1, 1, 2);
+INSERT INTO `estadisticas_jugadores` (`Id_Estadistica_Jugador`, `Goles`, `Perdidas`, `Recuperaciones`, `Temporada`, `Jugador`, `Competicion`,`Equipo`) VALUES
+(1, 1, 0, 0, 1, 1, 2,1);
 INSERT INTO `jugadores_puestos` (`Jugador`, `Puesto`) VALUES
 (1, 7);
 

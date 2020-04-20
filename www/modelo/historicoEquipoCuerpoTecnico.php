@@ -40,8 +40,8 @@ class HistoricoEquipoCuerpoTecnico {
         return $this->equipo;
     }
 
-    function getTenporada() {
-        return $this->tenporada;
+    function getTemporada() {
+        return $this->temporada;
     }
 
     function getCuerpoTecnico() {
@@ -52,8 +52,8 @@ class HistoricoEquipoCuerpoTecnico {
         $this->equipo = $equipo;
     }
 
-    function setTenporada($tenporada) {
-        $this->tenporada = $tenporada;
+    function setTemporada($temporada) {
+        $this->temporada = $temporada;
     }
 
     function setCuerpoTecnico($cuerpoTecnico) {

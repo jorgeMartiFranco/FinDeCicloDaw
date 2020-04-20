@@ -14,14 +14,14 @@ $(document).ready(function() {
             
             var fichajes=JSON.parse(fichajesJSON);
             tbodyFichajes.remove();
-            var tbody=$("<tbody>");
+            var tbody=$("<tbody class='border-right border-top border-secondary'>");
             
             for(let fichaje of fichajes){
                 
                var tr=$("<tr>");
                
               
-                var arrayPropiedades=[fichaje.nombre+" "+ fichaje.apellido1,fichaje.puestos,fichaje.equipoEmisor,fichaje.equipoReceptor];
+                var arrayPropiedades=[fichaje.imagen,"<a href='fichajugador.php?id="+fichaje.id+"' class='text-dark'>"+fichaje.nombre+" "+ fichaje.apellido1+"</a>",fichaje.puestos,fichaje.equipoEmisor,fichaje.equipoReceptor];
                
                 for(let i=0;i<arrayPropiedades.length;i++){
                     var td=$("<td>");
@@ -35,6 +35,7 @@ $(document).ready(function() {
                tbody.append(tr);
                
             }
+           
             tablaFichajes.append(tbody);
         });
 
@@ -53,14 +54,15 @@ $(document).ready(function() {
             
             var libres=JSON.parse(libresJSON);
             tbodyLibres.remove();
-            var tbody=$("<tbody>");
+            var tbody=$("<tbody class='border-right border-top border-secondary'>");
+            
             
             for(let libre of libres){
                 
                var tr=$("<tr>");
                
               
-                var arrayPropiedades=[libre.nombre+" "+ libre.apellido1,libre.puestos,libre.pais];
+                var arrayPropiedades=[libre.imagen,"<a href='fichajugador.php?id="+libre.id+"' class='text-dark'>"+libre.nombre+" "+ libre.apellido1+"</a>",libre.puestos,libre.pais];
                
                 for(let i=0;i<arrayPropiedades.length;i++){
                     var td=$("<td>");
@@ -74,6 +76,7 @@ $(document).ready(function() {
                tbody.append(tr);
                
             }
+           
             tablaLibres.append(tbody);
         });
 

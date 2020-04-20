@@ -13,3 +13,9 @@ GRANT SELECT ON mundo_balonmano.puestos_cuerpo_tecnico TO 'dbadministrator'@'loc
 GRANT SELECT ON mundo_balonmano.historico_fichajes_cuerpo_tecnico TO 'dbadministrator'@'localhost';
 GRANT SELECT ON mundo_balonmano.noticias TO 'dbadministrator'@'localhost';
 GRANT SELECT ON mundo_balonmano.competiciones TO 'dbadministrator'@'localhost';
+GRANT SELECT ON mundo_balonmano.tipos_contrato TO 'dbadministrator'@'localhost';
+GRANT SELECT ON mundo_balonmano.estadisticas_jugadores TO 'dbadministrator'@'localhost';
+GRANT SELECT ON mundo_balonmano.temporadas TO 'dbadministrator'@'localhost';
+GRANT SELECT ON mundo_balonmano.continentes TO 'dbadministrator'@'localhost';
+GRANT SELECT ON mundo_balonmano.historico_equipos_cuerpo_tecnico TO 'dbadministrator'@'localhost';
+GRANT SELECT ON mundo_balonmano.historico_equipos_competiciones TO 'dbadministrator'@'localhost';

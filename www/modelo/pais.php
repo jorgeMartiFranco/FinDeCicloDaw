@@ -19,6 +19,10 @@ class Pais {
      */
     private $nombre;
     /**
+     * @ORM\Column(type="string", name="Nacionalidad")
+     */
+    private $nacionalidad;
+    /**
      * @ORM\ManyToOne(targetEntity="Continente")
      * @ORM\JoinColumn(name="Continente",referencedColumnName="Id_Continente")
      */
@@ -42,6 +46,10 @@ class Pais {
         return $this->nombre;
     }
 
+    function getNacionalidad() {
+        return $this->nacionalidad;
+    }
+
     function getContinente() {
         return $this->continente;
     }
@@ -56,6 +64,10 @@ class Pais {
 
     function setContinente($continente) {
         $this->continente = $continente;
+    }
+
+    function setNacionalidad($nacionalidad) {
+        $this->nacionalidad = $nacionalidad;
     }
 
 
