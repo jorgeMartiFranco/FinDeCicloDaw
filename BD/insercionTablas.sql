@@ -127,57 +127,20 @@ INSERT INTO `jugadores_puestos` (`Jugador`, `Puesto`) VALUES
 -- Volcado de datos para la tabla `noticias`
 --
 
-INSERT INTO `noticias` (`Id_Noticia`, `Titular`,`Fecha`, `Noticia`, `Competicion`) VALUES
-(2, 'Sterbik: \"Hay que ser mentalista si quieres parar lanzamientos a 120 kilómetros por hora\"','2020-04-11', 'Esta temporada va a ser la última de Arpad Sterbik. Uno de los mejores porteros de la historia del balonmano, que en la actualidad milita en el Veszprem, siente que ha llegado el momento de dar un paso al lado a sus 40 años. Con la competición húngara suspendida ayer de manera oficial por la pandemia, Arpad repasa su decisión de dejarlo y su carrera en MARCA.', 1),
-(3, 'Arpad Sterbik, el guardameta \'comecocos\' del siglo XXI','2020-04-11', '', 1),
-(4, 'Blaz Janc avisa de que si la \'Final Four\' de la Champions es en agosto, la jugará con el Kielce','2020-04-11', '', 1),
-(5, 'La Federación Brasileña cesa a Dani Gordo como seleccionador','2020-04-11', '', 1),
-(6, 'El brasileño Thiago Alves, otro pilar que seguirá en el Cuenca','2020-04-11', '', 1),
-(7, 'Arpad Sterbik, el adiós de un \'gigante\' de las porterías','2020-04-12', '', 1),
-(8, 'Finalizadas las competiciones en Dinamarca con el Aalborg y el Esbjerg como campeones','2020-04-12', '', 1),
-(9, 'La pandemia del coronavirus precipita la retirada de Sterbik a los 40 años','2020-04-12', '', 1),
-(10, 'El Cangas llevará a la Federación ante la justicia ordinaria si hay descensos','2020-04-12', '', 1),
-(11, 'Pérez de Vargas: \"Hago cosas que antes no podía hacer por falta de tiempo\"','2020-04-12', '', 1);
+INSERT INTO `noticias` (`Id_Noticia`, `Titular`,`Fecha`, `Noticia`, `Competicion`,`Autor`) VALUES
+(2, 'Sterbik: \"Hay que ser mentalista si quieres parar lanzamientos a 120 kilómetros por hora\"','2020-04-11', 'Esta temporada va a ser la última de Arpad Sterbik. Uno de los mejores porteros de la historia del balonmano, que en la actualidad milita en el Veszprem, siente que ha llegado el momento de dar un paso al lado a sus 40 años. Con la competición húngara suspendida ayer de manera oficial por la pandemia, Arpad repasa su decisión de dejarlo y su carrera en MARCA.', 1,1),
+(3, 'Arpad Sterbik, el guardameta \'comecocos\' del siglo XXI','2020-04-11', '', 1,1),
+(4, 'Blaz Janc avisa de que si la \'Final Four\' de la Champions es en agosto, la jugará con el Kielce','2020-04-11', '', 1,1),
+(5, 'La Federación Brasileña cesa a Dani Gordo como seleccionador','2020-04-11', '', 1,1),
+(6, 'El brasileño Thiago Alves, otro pilar que seguirá en el Cuenca','2020-04-11', '', 1,1),
+(7, 'Arpad Sterbik, el adiós de un \'gigante\' de las porterías','2020-04-12', '', 1,1),
+(8, 'Finalizadas las competiciones en Dinamarca con el Aalborg y el Esbjerg como campeones','2020-04-12', '', 1,1),
+(9, 'La pandemia del coronavirus precipita la retirada de Sterbik a los 40 años','2020-04-12', '', 1,1),
+(10, 'El Cangas llevará a la Federación ante la justicia ordinaria si hay descensos','2020-04-12', '', 1,1),
+(11, 'Pérez de Vargas: \"Hago cosas que antes no podía hacer por falta de tiempo\"','2020-04-12', '', 1,1);
 
---
--- Volcado de datos para la tabla `paises`
---
-
-
-
---
--- Volcado de datos para la tabla `puestos`
---
-
-
-
---
--- Volcado de datos para la tabla `puestos_cuerpo_tecnico`
---
-
-
-
---
--- Volcado de datos para la tabla `temporadas`
---
-
-
-
---
--- Volcado de datos para la tabla `tipos_competicion`
---
-
-
-
---
--- Volcado de datos para la tabla `tipos_contrato`
---
-
-
-
---
--- Volcado de datos para la tabla `tipos_equipo`
---
+INSERT INTO `tipos_usuario` (Tipo_Usuario) VALUES
+('registrado'),('premium'),('noticias'),('registros'),('administrador'),('superusuario');
 
 COMMIT;
 

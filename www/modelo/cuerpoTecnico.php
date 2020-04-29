@@ -79,6 +79,10 @@ class CuerpoTecnico {
      */
     private $equipoActual;
     
+    /**
+    * @ORM\ManyToMany(targetEntity="Usuario", mappedBy="tecnicosFavoritos")
+    */
+    private $usuarios;
     
     function __construct($nombre, $apellido1, $fechaNacimiento, $pais, $puesto, $tipoContrato, $equipoActual) {
         $this->nombre = $nombre;
@@ -88,6 +92,7 @@ class CuerpoTecnico {
         $this->puesto = $puesto;
         $this->tipoContrato = $tipoContrato;
         $this->equipoActual = $equipoActual;
+        $this->usuarios=new Doctrine\Common\Collections\ArrayCollection();
     }
 
     
@@ -205,6 +210,22 @@ class CuerpoTecnico {
 
     function setReputacion($reputacion) {
         $this->reputacion = $reputacion;
+    }
+
+    function getUltimoCambioEquipo() {
+        return $this->ultimoCambioEquipo;
+    }
+
+    function getUsuarios() {
+        return $this->usuarios;
+    }
+
+    function setUltimoCambioEquipo($ultimoCambioEquipo) {
+        $this->ultimoCambioEquipo = $ultimoCambioEquipo;
+    }
+
+    function setUsuarios($usuarios) {
+        $this->usuarios = $usuarios;
     }
 
 

@@ -48,6 +48,11 @@ class Equipo {
      */
     private $jugadores;
 
+
+    /**
+    * @ORM\ManyToMany(targetEntity="Usuario", mappedBy="equiposFavoritos")
+    */
+    private $usuarios;
     
     function __construct($club, $tipoEquipo, $competicion,$reputacion) {
         $this->club = $club;
@@ -56,6 +61,7 @@ class Equipo {
         $this->reputacion=$reputacion;
         $this->cuerpoTecnico=new Doctrine\Common\Collections\ArrayCollection();
         $this->jugadores=new Doctrine\Common\Collections\ArrayCollection();
+        $this->usuarios=new Doctrine\Common\Collections\ArrayCollection();
     }
 
     
@@ -85,6 +91,10 @@ class Equipo {
 
     function getJugadores() {
         return $this->jugadores;
+    }
+
+    function getGenero() {
+        return $this->genero;
     }
 
     function getCuerpoTecnico() {
@@ -119,6 +129,20 @@ class Equipo {
     function setJugadores($jugadores) {
         $this->jugadores = $jugadores;
     }
+
+    function setGenero($genero) {
+        $this->genero = $genero;
+    }
+    
+    function getUsuarios() {
+        return $this->usuarios;
+    }
+
+    function setUsuarios($usuarios) {
+        $this->usuarios = $usuarios;
+    }
+
+
 }
 
 

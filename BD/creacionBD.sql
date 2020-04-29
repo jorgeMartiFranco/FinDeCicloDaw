@@ -570,6 +570,34 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
+CREATE TABLE IF NOT EXISTS `tipos_usuario` (
+`Id_Tipo_Usuario` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+`Tipo_Usuario` VARCHAR(45) NOT NULL,
+`Descripcion` VARCHAR(255) NULL,
+PRIMARY KEY (Id_Tipo_Usuario)
+
+);
+
+CREATE TABLE IF NOT EXISTS `usuarios` (
+`Id_Usuario` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+`Nombre` VARCHAR(64) NOT NULL,
+`Apellido1` VARCHAR(64) NOT NULL,
+`Apellido2` VARCHAR(64) NOT NULL,
+`Email` VARCHAR(255) NOT NULL,
+`Contraseña` VARCHAR(255) NOT NULL,
+`Confirmacion` VARCHAR(255) NOT NULL,
+`Caducidad_Suscripcion` DATE NULL,
+`Estado` ENUM('NC','C','D') NOT NULL DEFAULT 'NC',
+`Tipo_Usuario` INT UNSIGNED NOT NULL,
+PRIMARY KEY (`Id_Usuario`),
+INDEX `fk1_Tipo_Usuario` (`Tipo_Usuario`),
+CONSTRAINT `fk1_Tipo_Usuario`
+FOREIGN KEY (`Tipo_Usuario`)
+REFERENCES `tipos_usuario` (`Id_Tipo_Usuario`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT
+
+);
 
 CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`noticias` (
 `Id_Noticia` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -578,16 +606,85 @@ CREATE TABLE IF NOT EXISTS `mundo_balonmano`.`noticias` (
 `DescripcionImagen` VARCHAR(128) NULL,
 `Fecha` DATE NOT NULL DEFAULT DATE(NOW()),
 `Competicion` INT UNSIGNED NOT NULL,
+`Autor` INT UNSIGNED NOT NULL,
 PRIMARY KEY(`Id_Noticia`),
 INDEX `fk10_Competicion` (`Competicion`),
+INDEX fk3_Usuario (Autor),
 CONSTRAINT `fk10_Competicion`
 FOREIGN KEY (`Competicion`)
 REFERENCES `mundo_balonmano`.`competiciones` (`Id_Competicion`)
 ON DELETE CASCADE
+ON UPDATE CASCADE,
+CONSTRAINT `fk3_Usuario`
+FOREIGN KEY (`Autor`)
+REFERENCES `mundo_balonmano`.`usuarios` (`Id_Usuario`)
+ON DELETE RESTRICT
 ON UPDATE CASCADE
 
 )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS favoritos_jugadores (
+`Usuario` INT UNSIGNED NOT NULL,
+`Jugador` INT UNSIGNED NOT NULL,
+PRIMARY KEY (Usuario,Jugador),
+INDEX fk1_Usuario (Usuario),
+INDEX fk3_Jugador (Jugador),
+CONSTRAINT fk1_Usuario
+FOREIGN KEY (Usuario)
+REFERENCES usuarios (Id_Usuario)
+ON UPDATE CASCADE
+ON DELETE CASCADE,
+CONSTRAINT fk3_Jugador
+FOREIGN KEY (Jugador)
+REFERENCES jugadores (Id_Jugador)
+ON UPDATE CASCADE
+ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS favoritos_equipos (
+`Usuario` INT UNSIGNED NOT NULL,
+`Equipo` INT UNSIGNED NOT NULL,
+PRIMARY KEY (Usuario,Equipo),
+INDEX fk2_Usuario (Usuario),
+INDEX fk13_Equipos (Equipo),
+CONSTRAINT fk2_Usuario
+FOREIGN KEY (Usuario)
+REFERENCES usuarios (Id_Usuario)
+ON UPDATE CASCADE
+ON DELETE CASCADE,
+CONSTRAINT fk13_Equipos
+FOREIGN KEY (Equipo)
+REFERENCES equipos (Id_Equipo)
+ON UPDATE CASCADE
+ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS favoritos_cuerpo_tecnico (
+`Usuario` INT UNSIGNED NOT NULL,
+`Cuerpo_Tecnico` INT UNSIGNED NOT NULL,
+PRIMARY KEY (Usuario,Cuerpo_Tecnico),
+INDEX fk4_Usuario (Usuario),
+INDEX fk5_Cuerpo_Tecnico (Cuerpo_Tecnico),
+CONSTRAINT fk4_Usuario
+FOREIGN KEY (Usuario)
+REFERENCES usuarios (Id_Usuario)
+ON UPDATE CASCADE
+ON DELETE CASCADE,
+CONSTRAINT fk5_Cuerpo_Tecnico
+FOREIGN KEY (Cuerpo_Tecnico)
+REFERENCES cuerpo_tecnico (Id_Cuerpo_Tecnico)
+ON UPDATE CASCADE
+ON DELETE CASCADE
+);
+
+
+
+
 
 

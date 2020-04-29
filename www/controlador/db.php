@@ -20,11 +20,16 @@ require_once __DIR__ . '/../modelo/tipoCompeticion.php';
 require_once __DIR__ . '/../modelo/tipoContrato.php';
 require_once __DIR__ . '/../modelo/tipoEquipo.php';
 require_once __DIR__ . '/../modelo/noticia.php';
+require_once __DIR__ . '/../modelo/usuario.php';
+require_once __DIR__ . '/../modelo/tipoUsuario.php';
 
 
 
 use \Doctrine\ORM\Tools\Setup;
 use \Doctrine\ORM\EntityManager;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
 function cargar($user): EntityManager {
     $global = parse_ini_file("config/db-global.ini");
@@ -64,14 +69,20 @@ function cargarUltimosFichajes() {
     $fichajes = array_slice($fichajes, 0, 9);
     echo "<div class = 'table-responsive'>
     <table class='table text-center' id='tablaFichajesJugadores'>
-            <thead class='bg-primary'><tr>
+            <thead class='bg-primary '><tr>
             <th scope='col'>#</th>
             <th scope='col'>Jugador</th>
             <th scope='col'>Posición</th>
+            <th>Edad</th>
             <th scope='col'>Procedencia</th>
             <th scope='col'>Destino</th>
             </tr></thead><tbody class='border-right border-top border-secondary'>";
     foreach($fichajes as $fichaje){
+
+        $edad = DateTime::createFromFormat('Y-m-d', date_format($fichaje->getJugador()->getFechaNacimiento(),"Y-m-d"))
+                ->diff(new DateTime('now'))
+                ->y;
+
         if($fichaje->getEquipoEmisor()->getTipoEquipo()->getTipo()=="A"){
             $tipoA="";
         }
@@ -110,7 +121,9 @@ function cargarUltimosFichajes() {
         
         }
 
-        echo " </td><td><a href='fichaequipo.php?id=".$fichaje->getEquipoEmisor()->getId()."' class='text-dark'>".$fichaje->getEquipoEmisor()->getClub()->getNombreCorto()." ".$tipoA."</a></td>
+        echo " </td>
+        <td>$edad</td>
+        <td><a href='fichaequipo.php?id=".$fichaje->getEquipoEmisor()->getId()."' class='text-dark'>".$fichaje->getEquipoEmisor()->getClub()->getNombreCorto()." ".$tipoA."</a></td>
         <td><a href='fichaequipo.php?id=".$fichaje->getEquipoReceptor()->getId()."' class='text-dark'>".$fichaje->getEquipoReceptor()->getClub()->getNombreCorto()." ".$tipoB."</a></td>
         </tr>";
     }
@@ -136,10 +149,15 @@ function cargarJugadoresLibres(){
            <th scope='col'>#</th>
             <th scope='col'>Jugador</th>
             <th scope='col'>Posición</th>
+            <th>Edad</th>
             <th scope='col'>Nacionalidad</th>
             </tr></thead><tbody class='border-right border-top border-secondary'>";
 
     foreach($libres as $libre){
+
+        $edad = DateTime::createFromFormat('Y-m-d', date_format($libre->getFechaNacimiento(),"Y-m-d"))
+        ->diff(new DateTime('now'))
+        ->y;
 
         if(file_exists("img/jugadores/".$libre->getId()."mini.jpg")){
             $imagen="<img src='img/jugadores/".$libre->getId()."mini.jpg' />";
@@ -160,7 +178,10 @@ function cargarJugadoresLibres(){
                 echo "/".$puesto->getPuestoCorto();
             }
         }
-           echo "</td><td>".$libre->getPais()->getNacionalidad()."</td></tr>";
+
+           echo "</td>
+           <td>$edad</td>
+           <td>".$libre->getPais()->getNacionalidad()."</td></tr>";
     }
 
     echo "</tbody></table></div>";
@@ -183,10 +204,16 @@ function cargarTecnicosLibres(){
            <th scope='col'>#</th>
             <th scope='col'>Técnico</th>
             <th scope='col'>Puesto</th>
+            <th>Edad</th>
             <th scope='col'>Nacionalidad</th>
             </tr></thead><tbody class='border-right border-top border-secondary'>";
 
     foreach($libres as $libre){
+
+
+        $edad = DateTime::createFromFormat('Y-m-d', date_format($libre->getFechaNacimiento(),"Y-m-d"))
+                ->diff(new DateTime('now'))
+                ->y;
 
         if(file_exists("img/tecnicos/".$libre->getId()."mini.jpg")){
             $imagen="<img src='img/tecnicos/".$libre->getId()."mini.jpg'/>";
@@ -198,6 +225,7 @@ function cargarTecnicosLibres(){
         <td>$imagen</td>
         <td><a href='fichatecnico.php?id=".$libre->getId()."' class='text-dark'>".$libre->getNombre()." ".$libre->getApellido1()."</a></td>
             <td class='text-dark'>".$libre->getPuesto()->getPuesto()."</td>
+            <td>$edad</td>
             <td class='text-dark'>".$libre->getPais()->getNacionalidad()."</td></tr>";
     }
 
@@ -221,10 +249,17 @@ function cargarUltimosFichajesTecnicos(){
             <th scope='col'>#</th>
             <th scope='col'>Técnico</th>
             <th scope='col'>Puesto</th>
+            <th>Edad</th>
             <th scope='col'>Procedencia</th>
             <th scope='col'>Destino</th>
             </tr></thead><tbody class='border-right border-top border-secondary'>";
     foreach($fichajes as $fichaje){
+
+
+        $edad = DateTime::createFromFormat('Y-m-d', date_format($fichaje->getCuerpoTecnico()->getFechaNacimiento(),"Y-m-d"))
+                ->diff(new DateTime('now'))
+                ->y;
+
         if($fichaje->getEquipoEmisor()->getTipoEquipo()->getTipo()=="A"){
             $tipoA="";
         }
@@ -249,6 +284,7 @@ function cargarUltimosFichajesTecnicos(){
         <td>$imagen</td>
         <td><a href='fichatecnico.php?id=".$fichaje->getCuerpoTecnico()->getId()."' class='text-dark'>".$fichaje->getCuerpoTecnico()->getNombre()." ".$fichaje->getCuerpoTecnico()->getApellido1()."</a></td>
         <td class='text-dark'>".$fichaje->getCuerpoTecnico()->getPuesto()->getPuesto()."</td>
+        <td>$edad</td>
         <td><a href='fichaequipo.php?id=".$fichaje->getEquipoEmisor()->getId()."' class='text-dark'>".$fichaje->getEquipoEmisor()->getClub()->getNombreCorto()." ".$tipoA."</a></td>
         <td><a href='fichaequipo.php?id=".$fichaje->getEquipoReceptor()->getId()."' class='text-dark'>".$fichaje->getEquipoReceptor()->getClub()->getNombreCorto()." ".$tipoB."</td>
         </tr>";
@@ -320,8 +356,8 @@ function cargarDropdownNoticias(){
     echo "<a class='dropdown-item py-2' href='noticias.php'><h6>Mundo</h6></a>";
     foreach($paises as $pais){
 
-        echo "<a class='dropdown-item py-2' href='noticias.php?pais=".$pais->getNombre()."'><h6>".$pais->getNombre()."</h6></a>";
-    }
+        echo "<a class='dropdown-item dropright py-2' href='noticias.php?pais=".$pais->getNombre()."'><h6>".$pais->getNombre()."</h6></a>";
+     }
 }
 
 function cargarNoticia($noticia){
@@ -331,7 +367,7 @@ function cargarNoticia($noticia){
    <div class='row text-center my-2'><div class='col'><img src='img/noticias/".$noticia->getId().".jpg' class='img-fluid'/></div></div>
     <div class='row bg-light py-3'><div class='col'><a href='noticiacompleta.php?id=".$noticia->getId()."'><h3 class='text-dark text-justify'>".$noticia->getTitular()."</h3></a></div></div>
     <div class='row '><div class='col'><small>".date_format($noticia->getFecha(),"d-m-Y")."</small></div></div>
-     <div class='row'><div class='col'><small>//JORGE MARTÍNEZ</small></div></div>
+     <div class='row'><div class='col'><small>".mb_strtoupper($noticia->getAutor()->getNombre()." ".$noticia->getAutor()->getApellido1())."</small></div></div>
    
     </div>";
 }
@@ -373,13 +409,7 @@ function cargarPaisSeleccionado($pais){
    if(!is_null($pais)){
     echo "<div class='col col-lg-3 mb-2 '><a class='nav-link text-dark bg-light border border-secondary mr-lg-3 p-2 text-center' href='noticias.php?pais=".$pais->getNombre()."'><h4>".$pais->getNombre()."</h4></a></div>";
    }
-   
-
-    
-       
-    
-
-    }
+ }
 
 function cargarCompeticionesPaisSeleccionado($pais){
     $entityM=cargar("admin");
@@ -462,7 +492,7 @@ function cargarNoticiaCompleta($idNoticia){
     echo "<div class='row text-center mt-5 bg-light'><div class='col'><h1>".$noticia->getTitular()."</h1></div></div>
     <div class='row border-top border-right border-secondary rounded'><div class='col'>
     <div class='row mx-lg-5'><div class='col'><small>".date_format($noticia->getFecha(),"d-m-Y")."</small></div></div>
-    <div class='row mx-lg-5'><div class='col'><small>JORGE MARTÍNEZ</small></div></div>
+    <div class='row mx-lg-5'><div class='col'><small>".mb_strtoupper($noticia->getAutor()->getNombre()." ".$noticia->getAutor()->getApellido1())."</small></div></div>
     <div class='row text-center my-2'><div class='col'><img src='img/noticias/".$idNoticia.".jpg' class='img-fluid'/></div></div>
     <div class='row text-center my-2'><div class='col'><small>".$noticia->getDescripcionImagen()."</small></div></div>
      <div class='row mx-1 justify-content-center my-5'><div class='col-lg-8'>".$noticia->getNoticia()."</div></div></div></div>";
@@ -840,13 +870,13 @@ function cargarCompeticion($competicion){
 function busqueda(){
 
     $entityM=cargar("admin");
-    $continentes=$entityM->getRepository("Continente")->findAll();
+   
+    if(isset($_POST["persona"])){
+         $continentes=$entityM->getRepository("Continente")->findAll();
     $niveles=$entityM->getRepository("TipoContrato")->findAll();
-    $queryJugadores=$entityM->createQueryBuilder();
     $tecnicos=[];
     $jugadores=[];
     $persona=filter_input(INPUT_POST, "persona");
-    if(isset($_POST["persona"])){
         $flag="";
     if(isset($_POST["jugador"])){
        
@@ -1009,15 +1039,14 @@ function busqueda(){
     $tecnicos = $queryTecnicos->getResult();
     }
     
-
     $personas=array_merge($jugadores,$tecnicos);
-    usort($personas, fn($a, $b) => strcmp($b->getReputacion(), $a->getReputacion()));
+    usort($personas, fn($a, $b) => ($a->getReputacion() < $b->getReputacion()) ? 1 : (($a->getReputacion() > $b->getReputacion()) ? -1 : 0));
 
    if(count($personas)>0){
 
 
     echo "<div class = 'table-responsive'>
-    <table class='table text-center'>
+    <table class='table text-center border-top border-secondary border-right'>
             <thead class='bg-primary'>
             <th>#</th>
             <th>Persona</th>
@@ -1026,7 +1055,7 @@ function busqueda(){
             <th>Nacionalidad</th>
             <th>Equipo Actual</th>
             <th>Nivel</th>
-            </thead><tbody>";
+            </thead><tbody class='border-top border-right border-secondary'>";
     foreach($personas as $persona){
 
 if($persona instanceof Jugador){
@@ -1041,7 +1070,7 @@ if($persona instanceof Jugador){
     
 }
 else if($persona instanceof CuerpoTecnico){
-    $puesto="Técnico";
+    $puesto=$persona->getPuesto()->getPuesto();
     $enlace="fichatecnico.php?id=".$persona->getId()."";
     if(file_exists("img/tecnicos/".$persona->getId().".jpg")){
         $imagen="<img src='img/tecnicos/".$persona->getId()."mini.jpg' class='img-fluid'/>";
@@ -1088,10 +1117,465 @@ $edad = DateTime::createFromFormat('Y-m-d', date_format($persona->getFechaNacimi
 
     echo "<h3 class='text-center text-danger'>La búsqueda no devolvió ningún resultado</h3>";
    }
+   
     }
     else if(isset($_POST["equipos"])){
         
+        $paises=$entityM->getRepository("Pais")->findAll();
+        $flag="";
+        $consulta="select e from Equipo e where (e.club IN(select c.id from Club c where (c.nombreCompleto like '%".$_POST["equipos"]."%'";
+        $repetido=false;
+        $flag=")))";
+        foreach($paises as $pais){
+            if(isset($_POST[$pais->getNombre()])){
+                if($repetido){
+                    $consulta.$consulta." or p.nombre='".$pais->getNombre()."'";
+                }
+                else {
+                    $consulta=$consulta." and c.pais IN(select p.id from Pais p where (p.nombre='".$pais->getNombre()."'";
+                    $repetido=true;
+                    $flag=")))))";
+                }
+            }
+            
+        }
+        
+        
+        $consulta=$consulta.$flag;
+
+        $flag="";
+        $generoRepetido=false;
+        if(isset($_POST["masculino"])){
+            $consulta=$consulta." and (e.genero='M'";
+            $generoRepetido=true;
+            $flag=")";
+        }
+
+        if(isset($_POST["femenino"])){
+
+            if($generoRepetido){
+                $consulta=$consulta." or e.genero='F'";
+            }
+            else {
+                $consulta=$consulta."and (e.genero='F'";
+                $flag=")";
+            }
+        }
+        $consulta=$consulta.$flag;
+        $flag="";
+        $repetido=false;
+        $niveles=$entityM->getRepository("TipoEquipo")->findAll();
+        foreach($niveles as $nivel){
+            if(isset($_POST[$nivel->getTipo()])){
+
+                if($repetido){
+                    $consulta=$consulta."or te.tipo='".$nivel->getTipo()."'";
+                }
+                else {
+                    $consulta=$consulta." and (e.tipoEquipo IN(select te.id from TipoEquipo te where (te.tipo='".$nivel->getTipo()."' ";
+                    $repetido=true;
+                    $flag=")))";
+                }
+            }
+        }
+
+
+        $consulta=$consulta.$flag;
+
+        $queryEquipos=$entityM->createQuery($consulta);            
+        $equipos = $queryEquipos->getResult();
+        if(count($equipos)>0){
+            usort($equipos, fn($a, $b) => ($a->getReputacion() < $b->getReputacion()) ? 1 : (($a->getReputacion() > $b->getReputacion()) ? -1 : 0));
+        echo "<div class='table-responsive'>
+        <table class='table text-center border-top border-secondary border-right'>
+                <thead class='bg-primary'>
+                <th>#</th>
+                <th>Equipo</th>
+                <th>País</th>
+                <th>Género</th>
+                <th>Entrenador</th>
+                <th>Competición</th>
+                </thead><tbody class='border-top border-right border-secondary'>";
+        foreach($equipos as $equipo){
+
+
+            if($equipo->getTipoEquipo()->getTipo()=="A"){
+                $equipoStr=$equipo->getClub()->getNombreCompleto();
+            }
+            else {
+                $equipoStr=$equipo->getClub()->getNombreCompleto()." ".$equipo->getTipoEquipo()->getTipo();
+            }
+
+            if($equipo->getGenero()=="M"){
+                $genero="Masculino";
+            }
+            else {
+                $genero="Femenino";
+            }
+            $entrenadorEncontrado=false;
+            foreach($equipo->getCuerpoTecnico() as $tecnico){
+
+                if($tecnico->getPuesto()->getPuesto()=="Entrenador"){
+                    $entrenadorEncontrado=true;
+                    $entrenador=$tecnico;
+                }
+            }
+
+            if($entrenadorEncontrado){
+                if(!is_null($entrenador->getApodo())){
+                    $entrenador="<a href='fichatecnico.php?id=".$entrenador->getId()."' class='text-dark'>".$entrenador->getApodo()."</a>";
+                }
+                else {
+                    $entrenador="<a href='fichatecnico.php?id=".$entrenador->getId()."' class='text-dark'>".$entrenador->getNombre()." ".$entrenador->getApellido1()."</a>";
+                }
+                
+            }
+            else {
+                $entrenador="Sin entrenador";
+            }
+
+            echo "<tr>
+            <td><img src='img/clubs/".$equipo->getClub()->getId()."mini.jpg'/></td>
+            <td><a href='fichaequipo.php?id=".$equipo->getId()."' class='text-dark'>$equipoStr</a></td>
+            <td>".$equipo->getClub()->getPais()->getNombre()."</td>
+            <td>$genero</td>
+            <td>$entrenador</td>
+            <td><a href='fichacompeticion.php?id=".$equipo->getCompeticion()->getId()."' class='text-dark'>".$equipo->getCompeticion()->getNombre()."</a></td>
+            </tr>";
+        }
+
+        echo "</tbody></table></div>";
     }
+    else {
+        echo "<h3 class='text-center text-danger'>La búsqueda no devolvió ningún resultado</h3>";
+    }
+}
+
+else if (isset($_POST["buscatecnico"])){
+
+    $paises=$entityM->getRepository("Pais")->findAll();
+        $flag="";
+        $consulta="select t from CuerpoTecnico t where (t.nombre like '%".$_POST["buscatecnico"]."%' or t.apellido1 like '%".$_POST["buscatecnico"]."%' or t.apellido2 like '%".$_POST["buscatecnico"]."%') ";
+
+
+
+        $puestos=$entityM->getRepository("PuestoCuerpoTecnico")->findAll();
+        $repetido=false;
+        foreach($puestos as $puesto){
+
+            if(isset($_POST[$puesto->getPuesto()])){
+
+                if($repetido){
+                    $consulta=$consulta." or p.puesto='".$puesto->getPuesto()."'";
+                }
+                else {
+                    $consulta=$consulta." and (t.puesto IN(select p.id from PuestoCuerpoTecnico p where (p.puesto='".$puesto->getPuesto()."'";
+                    $flag=")))";
+                    $repetido=true;
+                }
+            }
+        }
+        $consulta=$consulta.$flag;
+        $flag="";
+        $repetido=false;
+        foreach($paises as $pais){
+
+            if(isset($_POST[$pais->getNombre()])){
+
+                if($repetido){
+                    $consulta=$consulta." or pa.nombre='".$pais->getNombre()."'";
+                }
+                else {
+                    $consulta=$consulta." and (t.pais IN(select pa.id from Pais pa where (pa.nombre='".$pais->getNombre()."'";
+                    $repetido=true;
+                    $flag=")))";
+                }
+            }
+        }
+         $consulta=$consulta.$flag;
+
+         $flag="";
+         $repetido=false;
+
+         if(isset($_POST["masculino"])){
+
+            $consulta=$consulta." and (t.genero='M'";
+            $flag=")";
+            $repetido=true;
+         }
+         
+         if(isset($_POST["femenino"])){
+            if($repetido){
+                $consulta=$consulta." or t.genero='F'";
+            }
+            else {
+                $consulta=$consulta." and (t.genero='F'";
+                $flag=")";
+            }
+         }
+
+         $consulta=$consulta.$flag;
+
+         $flag="";
+         $repetido=false;
+         if(isset($_POST["sinEquipo"])){
+            $consulta=$consulta." and (t.equipoActual IS NULL";
+            $flag=")";
+            $repetido=true;
+         }
+
+         if(isset($_POST["conEquipo"])){
+
+            if($repetido){
+                $consulta=$consulta." or t.equipoActual IS NOT NULL";
+            }
+            else {
+                $consulta=$consulta."and (t.equipoActual IS NOT NULL";
+                $flag=")";
+            }
+         }
+         
+         $consulta=$consulta.$flag;
+        $queryTecnicos=$entityM->createQuery($consulta);            
+        $tecnicos = $queryTecnicos->getResult();
+        usort($tecnicos, fn($a, $b) => ($a->getReputacion() < $b->getReputacion()) ? 1 : (($a->getReputacion() > $b->getReputacion()) ? -1 : 0));
+        if(count($tecnicos)>0){
+        echo "<div class='table-responsive'>
+        <table class='table text-center border-top border-secondary border-right'>
+                <thead class='bg-primary'>
+                <th>#</th>
+                <th>Técnico</th>
+                <th>Trabajo</th>
+                <th>Edad</th>
+                <th>Nacionalidad</th>
+                <th>Género</th>
+                <th>Equipo</th>
+                <th>Nivel</th>
+                </thead><tbody class='border-top border-right border-secondary'>";
+
+            foreach($tecnicos as $tecnico){
+
+                if(file_exists("img/tecnicos/".$tecnico->getId()."mini.jpg")){
+                    $imagen="<img src='img/tecnicos/".$tecnico->getId()."mini.jpg' class='img-fluid'/>";
+                }
+                else {
+                    $imagen="<img src='img/tecnicos/defectomini.jpg' class='img-fluid'/>";
+                }
+
+                if($tecnico->getGenero()=="M"){
+                    $genero="Masculino";
+                }
+                else {
+                    $genero="Femenino";
+                }
+
+                $edad = DateTime::createFromFormat('Y-m-d', date_format($tecnico->getFechaNacimiento(),"Y-m-d"))
+                ->diff(new DateTime('now'))
+                ->y;
+
+                if(!is_null($tecnico->getEquipoActual())){
+                    
+                    if($tecnico->getEquipoActual()->getTipoEquipo()->getTipo()=="A"){
+                        $equipo="<a href='fichaequipo.php?id=".$tecnico->getEquipoActual()->getId()."' class='text-dark'>".$tecnico->getEquipoActual()->getClub()->getNombreCompleto()." </a>";
+                    }
+                    else {
+                        $equipo="<a href='fichaequipo.php?id=".$tecnico->getEquipoActual()->getId()."' class='text-dark'>".$tecnico->getEquipoActual()->getClub()->getNombreCompleto()." ".$tecnico->getEquipoActual()->getTipoEquipo()->getTipo()." </a>";
+                    }
+                }
+                else {
+                    $equipo="Sin equipo";
+                }
+
+                echo "<tr>
+                <td>$imagen</td>
+                <td><a href='fichatecnico.php?id=".$tecnico->getId()."' class='text-dark'>".$tecnico->getNombre()." ".$tecnico->getApellido1()." ".$tecnico->getApellido2()."</a></td>
+                <td>".$tecnico->getPuesto()->getPuesto()."</td>
+                <td>$edad</td>
+                <td>".$tecnico->getPais()->getNacionalidad()."</td>
+                <td>$genero</td>
+                <td>$equipo</td>
+                <td>".$tecnico->getTipoContrato()->getTipoContrato()."</td>
+                </tr>";
+            }
+
+        echo "</tbody></table></div>";
+        }
+        else {
+            echo "<h3 class='text-center text-danger'>La búsqueda no devolvió ningún resultado</h3>";
+        }
+
+}
+
+else if(isset($_POST["buscajugador"])){
+
+    $paises=$entityM->getRepository("Pais")->findAll();
+    $flag="";
+    $consulta="select j from Jugador j where (j.nombre like '%".$_POST["buscajugador"]."%' or j.apellido1 like '%".$_POST["buscajugador"]."%' or j.apellido2 like '%".$_POST["buscajugador"]."%') ";
+    $puestos=$entityM->getRepository("Puesto")->findAll();
+
+
+    $repetido=false;
+    $flag="";
+    foreach($puestos as $puesto){
+        if(isset($_POST[$puesto->getPuestoCorto()])){
+            
+            if($repetido){
+                $consulta=$consulta." or p.puesto='".$puesto->getPuesto()."'";
+            }
+            else {
+                $consulta=$consulta." and (j.puestos.id IN(select p.id from Puesto p where (p.puesto='".$puesto->getPuesto()."'";
+                $flag=")))";
+                $repetido=true;
+            }
+        }
+    }
+    $consulta=$consulta.$flag;
+
+    $repetido=false;
+    $flag="";
+    foreach($paises as $pais){
+        
+        if(isset($_POST[$pais->getNombre()])){
+            if($repetido){
+                $consulta=$consulta." or p.nombre='".$pais->getNombre()."'";
+            }
+            else {
+                $consulta=$consulta." and (j.pais IN(select p.id from Pais p where (p.nombre='".$pais->getNombre()."'";
+                $repetido=true;
+                $flag=")))";
+            }
+        }
+    }
+    $consulta=$consulta.$flag;
+    
+    $flag="";
+    $repetido=false;
+
+    if(isset($_POST["masculino"])){
+        $consulta=$consulta." and (j.genero='M'";
+        $flag=")";
+        $repetido=true;
+    }
+    if(isset($_POST["femenino"])){
+        if($repetido){
+            $consulta=$consulta." or j.genero='F'";
+            
+        }
+        else {
+            $consulta=$consulta." and (j.genero='F'";
+            $flag=")";
+        }
+    }
+    $consulta=$consulta.$flag;
+
+
+    $flag="";
+    $repetido=false;
+
+    if(isset($_POST["sinEquipo"])){
+        $consulta=$consulta." and (j.equipoActual IS NULL";
+        $flag=")";
+        $repetido=true;
+    }
+
+    if(isset($_POST["conEquipo"])){
+        if($repetido){
+            $consulta=$consulta." or j.equipoActual IS NOT NULL";
+        }
+        else {
+            $consulta=$consulta." and (j.equipoActual IS NOT NULL";
+            $flag=")";
+        }
+    }
+    $consulta=$consulta.$flag;
+
+    $queryJugadores=$entityM->createQuery($consulta);            
+    $jugadores = $queryJugadores->getResult();
+    usort($jugadores, fn($a, $b) => ($a->getReputacion() < $b->getReputacion()) ? 1 : (($a->getReputacion() > $b->getReputacion()) ? -1 : 0));
+
+    if(count($jugadores)>0){
+
+        echo "<div class='table-responsive'>
+        <table class='table text-center border-top border-secondary border-right'>
+                <thead class='bg-primary'>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Puesto</th>
+                <th>Edad</th>
+                <th>Nacionalidad</th>
+                <th>Género</th>
+                <th>Equipo</th>
+                <th>Nivel</th>
+                </thead><tbody class='border-top border-right border-secondary'>";
+
+
+            foreach($jugadores as $jugador){
+
+                if(file_exists("img/jugadores/".$jugador->getId()."mini.jpg")){
+                    $imagen="<img src='img/jugadores/".$jugador->getId()."mini.jpg' class='img-fluid'/>";
+                }
+                else {
+                    $imagen="<img src='img/jugadores/defectomini.jpg' class='img-fluid'/>";
+                }
+
+                if($jugador->getGenero()=="M"){
+                    $genero="Masculino";
+                }
+                else {
+                    $genero="Femenino";
+                }
+
+                $edad = DateTime::createFromFormat('Y-m-d', date_format($jugador->getFechaNacimiento(),"Y-m-d"))
+                ->diff(new DateTime('now'))
+                ->y;
+
+                if(!is_null($jugador->getEquipoActual())){
+                    
+                    if($jugador->getEquipoActual()->getTipoEquipo()->getTipo()=="A"){
+                        $equipo="<a href='fichaequipo.php?id=".$jugador->getEquipoActual()->getId()."' class='text-dark'>".$jugador->getEquipoActual()->getClub()->getNombreCompleto()." </a>";
+                    }
+                    else {
+                        $equipo="<a href='fichaequipo.php?id=".$jugador->getEquipoActual()->getId()."' class='text-dark'>".$jugador->getEquipoActual()->getClub()->getNombreCompleto()." ".$jugador->getEquipoActual()->getTipoEquipo()->getTipo()." </a>";
+                    }
+                }
+                else {
+                    $equipo="Sin equipo";
+                }
+                
+                foreach($jugador->getPuestos() as $puesto){
+
+                    if($puesto==$jugador->getPuestos()[0]){
+                        $puestosStr=$puesto->getPuestoCorto();
+                    }
+                    else {
+                        $puestosStr=$puestosStr."/".$puesto->getPuestoCorto();
+                    }
+                }
+                echo "<tr>
+                <td>$imagen</td>
+                <td><a href='fichajugador.php?id=".$jugador->getId()."' class='text-dark'>".$jugador->getNombre()." ".$jugador->getApellido1()." ".$jugador->getApellido2()."</a></td>
+                <td>$puestosStr</td>
+                <td>$edad</td>
+                <td>".$jugador->getPais()->getNacionalidad()."</td>
+                <td>$genero</td>
+                <td>$equipo</td>
+                <td>".$jugador->getTipoContrato()->getTipoContrato()."</td>
+                </tr>";
+
+            }
+
+                echo "</tbody></table></div>";
+
+    }
+    else {
+        echo "<h3 class='text-center text-danger'>La búsqueda no devolvió ningún resultado</h3>";
+    }
+}
+else {
+    echo "<h3 class='text-center text-danger'>La búsqueda no devolvió ningún resultado</h3>";
+}
+
+
 
 }
 
@@ -1237,6 +1721,162 @@ function cargarFiltrosBusqueda($tipoBusqueda){
 
     }
 
+    else if($tipoBusqueda=="tecnicos"){
+        echo "<form action='busqueda.php' method='POST'>
+        <div class='row'><div class='col mt-3'><h3 class='text-secondary'>Búsqueda avanzada</h3></div></div>
+        <input class='form-control p-2 ' placeholder='Buscar técnicos' type='text' name='buscatecnico'>
+        <button class='btn btn-secondary p-2' type='submit'><i class='fa fa-search fa-lg text-white' aria-hidden='true'></i></button>
+        <div class='row mt-3'><div class='col'><h4 class='text-secondary'>Filtrar por:</h4></div></div>
+       
+
+        <div class='row mt-3'><div class='col'><h6>Puesto:</div></div>
+        <div class='row'><div class='col'>";
+        cargarPuestosTecnicos();
+        echo "</div></div>
+
+        <div class='row mt-3'><div class='col'><h6>País:</div></div>
+        <div class='row'><div class='col'>
+        ";
+        cargarPaises();
+        echo "</div></div>
+
+        <div class='row mt-3'><div class='col'><h6>Género:</div></div>
+        <div class='row'><div class='col'>
+
+        <div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='masculino' name='masculino'";
+        if(isset($_POST["masculino"])){
+            echo "checked";
+        };
+        echo "><label class='form-check-label' for='masculino'>Masculino</label>
+        </div>
+        <div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='femenino' name='femenino'";
+        if(isset($_POST["femenino"])){
+            echo "checked";
+        };
+        echo "><label class='form-check-label' for='femenino'>Femenino</label>
+        </div>
+        </div></div>
+
+
+        <div class='row mt-3'> <div class='col'><h6>Estado: </h6></div>
+        </div>
+        <div class='row'><div class='col'>
+        <div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='sinEquipo' name='sinEquipo'
+        ";
+            if(isset($_POST["sinEquipo"])){
+                echo "checked";
+            }
+        echo "><label class='form-check-label' for='sinEquipo'>Sin equipo</label>
+        </div>
+        <div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='conEquipo' name='conEquipo'";
+        if(isset($_POST["conEquipo"])){
+            echo "checked";
+        }
+        echo "><label class='form-check-label' for='conEquipo'>Con equipo</label>
+        </div>
+        </div></div>
+        
+
+        </form>";
+    }
+
+    else if($tipoBusqueda=="jugadores"){
+        echo "<form action='busqueda.php' method='POST'>
+        <div class='row'><div class='col mt-3'><h3 class='text-secondary'>Búsqueda avanzada</h3></div></div>
+        <input class='form-control p-2 ' placeholder='Buscar técnicos' type='text' name='buscajugador'>
+        <button class='btn btn-secondary p-2' type='submit'><i class='fa fa-search fa-lg text-white' aria-hidden='true'></i></button>
+        <div class='row mt-3'><div class='col'><h4 class='text-secondary'>Filtrar por:</h4></div></div>
+       
+
+        <div class='row mt-3'><div class='col'><h6>Puesto:</div></div>
+        <div class='row'><div class='col'>";
+        cargarPuestosJugador();
+        echo "</div></div>
+
+        <div class='row mt-3'><div class='col'><h6>País:</div></div>
+        <div class='row'><div class='col'>
+        ";
+        cargarPaises();
+        echo "</div></div>
+
+        <div class='row mt-3'><div class='col'><h6>Género:</div></div>
+        <div class='row'><div class='col'>
+
+        <div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='masculino' name='masculino'";
+        if(isset($_POST["masculino"])){
+            echo "checked";
+        };
+        echo "><label class='form-check-label' for='masculino'>Masculino</label>
+        </div>
+        <div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='femenino' name='femenino'";
+        if(isset($_POST["femenino"])){
+            echo "checked";
+        };
+        echo "><label class='form-check-label' for='femenino'>Femenino</label>
+        </div>
+        </div></div>
+
+
+        <div class='row mt-3'> <div class='col'><h6>Estado: </h6></div>
+        </div>
+        <div class='row'><div class='col'>
+        <div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='sinEquipo' name='sinEquipo'
+        ";
+            if(isset($_POST["sinEquipo"])){
+                echo "checked";
+            }
+        echo "><label class='form-check-label' for='sinEquipo'>Sin equipo</label>
+        </div>
+        <div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='conEquipo' name='conEquipo'";
+        if(isset($_POST["conEquipo"])){
+            echo "checked";
+        }
+        echo "><label class='form-check-label' for='conEquipo'>Con equipo</label>
+        </div>
+        </div></div>
+        
+
+        </form>";
+    }
+}
+function cargarPuestosJugador(){
+    $entityM=cargar("admin");
+    $puestos=$entityM->getRepository("Puesto")->findAll();
+
+    foreach($puestos as $puesto){
+        echo "<div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='".$puesto->getPuestoCorto()."' name='".$puesto->getPuestoCorto()."'";
+        if(isset($_POST[$puesto->getPuestoCorto()])){
+            echo "checked";
+        }
+        echo "><label class='form-check-label' for='".$puesto->getPuestoCorto()."'>".$puesto->getPuesto()."</label>
+        </div>";
+    }
+}
+
+function cargarPuestosTecnicos(){
+
+    $entityM=cargar("admin");
+    $puestos=$entityM->getRepository("PuestoCuerpoTecnico")->findAll();
+
+    foreach($puestos as $puesto){
+        echo "<div class='form-check'>
+        <input class='form-check-input' type='checkbox' value='' id='".$puesto->getPuesto()."' name='".$puesto->getPuesto()."'";
+        if(isset($_POST[$puesto->getPuesto()])){
+            echo "checked";
+        };
+        echo "><label class='form-check-label' for='".$puesto->getPuesto()."'>".$puesto->getPuesto()."</label>
+        </div>";
+
+    }
 }
 
 function cargarTiposEquipo(){
@@ -1503,9 +2143,12 @@ function cargarDatosEquipo($idEquipo){
         usort($temporadasEquipo, fn($a, $b) => strcmp($b->getTemporada()->getTemporada(), $a->getTemporada()->getTemporada()));
 
         echo "
+        <section class='row'";
+        echo "><div class='col'>
+        <div class='row'>
     <div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 text-center mt-5'>
                 <h1 class='text-secondary mb-1'>Ficha de equipo</h1>
-            </div>
+            </div></div>
     <div class='row px-2 borderEspecial'><div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-5 text-center '><div class='col'>$imagen</div></div>
                              <div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 '><div class='row '><div class='col '><h3 class='text-secondary'>".$equipoStr."</h3></div></div>
                             <div class='row'><div class='col'><h6>División: <a href='fichacompeticion.php?id=".$equipo->getCompeticion()->getId()."' class='text-dark'>".$equipo->getCompeticion()->getNombre()."</a></h6></div></div>
@@ -1540,8 +2183,8 @@ function cargarDatosEquipo($idEquipo){
 
                         $historicoCompeticion=$entityM->getRepository("HistoricoEquipoCompeticion")->findBy(["competicion"=>$temporadaEquipo->getCompeticion()->getId(),"temporada"=>$temporadaEquipo->getTemporada()->getId()]);
                         $contador=1;
-                        usort($historicoCompeticion, fn($a, $b) => strcmp(2*($a->getGanados())+$a->getEmpatados(), 2*($b->getGanados()+$b->getEmpatados())));
-
+                        
+                        usort($historicoCompeticion, fn($a, $b) => (2*($a->getGanados())+$a->getEmpatados() < 2*($b->getGanados()+$b->getEmpatados())) ? 1 : (2*($a->getGanados())+$a->getEmpatados() < 2*($b->getGanados()+$b->getEmpatados()) ? -1 : 0));
                         foreach($historicoCompeticion as $historico){
                             if($historico->getEquipo()->getId()==$idEquipo){
                                 echo "<tr>
@@ -1559,13 +2202,14 @@ function cargarDatosEquipo($idEquipo){
             
                 echo "
                 
-                </tbody></table></div></div></div>";
+                </tbody></table></div></div></div></div></section>";
                 
             }         
 
     $plantilla=cargarPlantilla($jugadores);
     echo $plantilla;
-    
+    $cuerpoTecnico=cargarCuerpoTecnico($equipo->getCuerpoTecnico());
+    echo $cuerpoTecnico;
    
     }
     else {
@@ -1574,12 +2218,65 @@ function cargarDatosEquipo($idEquipo){
     }
 }
 
+function cargarCuerpoTecnico($tecnicos){
+
+    $tecnicosStr="";
+
+
+    $tecnicosStr=$tecnicosStr."<section class='row'>
+    <div class='col'>
+    <div class='row px-2 text-secondary text-center my-5'>
+    <div class='col'><h2>Cuerpo técnico</h2></div></div>
+    <div class='table-responsive'>
+    <table class='table text-center'>
+            <thead class='bg-primary' ><tr>
+            <th scope='col' class='text-center'>#</th>
+            <th scope='col' class='text-center'>Técnico</th>
+            <th scope='col' class='text-center'>Puesto</th>
+            <th scope='col' class='text-center'>Edad</th>
+            <th scope='col' class='text-center'>Nacionalidad</th>
+            <th scope='col' class='text-center'>Nivel</th>
+            </tr></thead><tbody class='border-right border-top border-secondary'>";
+
+
+            foreach($tecnicos as $tecnico){
+
+                if(file_exists("img/tecnicos/".$tecnico->getId()."mini.jpg")){
+                    $imagen="<img src='img/tecnicos/".$tecnico->getId()."mini.jpg' class='img-fluid'/>";
+                }
+                else {
+                    $imagen="<img src='img/tecnicos/defectomini.jpg' class='img-fluid'/>";
+                }
+                $edad = DateTime::createFromFormat('Y-m-d', date_format($tecnico->getFechaNacimiento(),"Y-m-d"))
+                ->diff(new DateTime('now'))
+                ->y;
+                $tecnicosStr=$tecnicosStr."
+                
+                <tr>
+                <td>$imagen</td>
+                <td><a href='fichatecnico.php?id=".$tecnico->getId()."' class='text-dark'>".$tecnico->getNombre()." ".$tecnico->getApellido1()." ".$tecnico->getApellido2()."</a></td>
+                <td>".$tecnico->getPuesto()->getPuesto()."</td>
+                <td>$edad</td>
+                <td>".$tecnico->getPais()->getNacionalidad()."</td>
+                <td>".$tecnico->getTipoContrato()->getTipoContrato()."</td>
+                </tr>";
+            }
+
+
+            $tecnicosStr=$tecnicosStr. "</tbody></table></div></div></section>";    
+    return $tecnicosStr;
+}
+
+
+
 
 function cargarPlantilla($jugadores){
 
 $plantillaStr="";
 
 $plantillaStr=$plantillaStr."
+<section class='row borderEspecial'>
+<div class='col'>
 <div class='row px-2 text-secondary text-center my-5'>
 <div class='col'><h2>Plantilla</h2></div></div>
 <div class='table-responsive'>
@@ -1605,6 +2302,14 @@ $plantillaStr=$plantillaStr."
                    $puestos=$puestos."/".$puesto->getPuesto();
                 }
             }
+
+            if(file_exists("img/jugadores/".$jugador->getId()."mini.jpg")){
+                $imagen="<img src='img/jugadores/".$jugador->getId()."mini.jpg' class='img-fluid'/>";
+            }
+            else {
+                $imagen="<img src='img/jugadores/defectomini.jpg' class='img-fluid'/>";
+            }
+
             $edad = DateTime::createFromFormat('Y-m-d', date_format($jugador->getFechaNacimiento(),"Y-m-d"))
             ->diff(new DateTime('now'))
             ->y;
@@ -1623,7 +2328,7 @@ $plantillaStr=$plantillaStr."
 
         }
 
-        $plantillaStr=$plantillaStr. "</tbody></table></div></div></div>";
+        $plantillaStr=$plantillaStr. "</tbody></table></div></div></section>";
 return $plantillaStr;
 
 }
@@ -1651,15 +2356,17 @@ function cargarEquiposSinEntrenador(){
         }
     }
 
+
     usort($equiposSinEntrenador, fn($a, $b) => strcmp($b->getFechaSinEntrenador(), $a->getFechaSinEntrenador()));
     $equiposSinEntrenador = array_slice($equiposSinEntrenador, 0, 9);
 
     echo "<div class='table-responsive'>
-    <table class='table text-center'>
-            <thead class='bg-primary' ><tr>
+    <table class='table text-center border-top border-secondary border-right'>
+            <thead class='bg-primary border-secondary border-left' ><tr>
             <th scope='col' class='text-center'>#</th>
             <th scope='col' class='text-center'>Equipo</th>
             <th scope='col' class='text-center'>País</th>
+            <th scope='col' class='text-center'>Género</th>
             </tr></thead><tbody class='border-right border-top border-secondary'>";
 
     foreach($equiposSinEntrenador as $equipoSinEntrenador){
@@ -1682,6 +2389,7 @@ function cargarEquiposSinEntrenador(){
         <td>$imagen</td>
         <td><a href='fichaequipo.php?id=".$equipoSinEntrenador->getId()."' class='text-dark'>$equipo</a></td>
         <td>".$equipoSinEntrenador->getClub()->getPais()->getNombre()."</td>
+        <td>".$equipoSinEntrenador->getGenero()."</td>
         </tr>";
     }
 
@@ -1724,21 +2432,32 @@ function cargarDatosClub($idClub){
                    
                 echo "</div>";
                 echo "<div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 text-center'>
-                <h1 class='text-secondary'>Equipos</h1>";
+                <h1 class='text-secondary'>Equipos</h1>
+                <div class='row justify-content-center'>
+    <div class='table-responsive'>
+    <table class='table'>
+    <thead class='bg-primary'>
+    <tr>
+    <th>Equipo</th>
+    <th>Competición</th>
+    </tr>
+    </thead><tbody class='border-top border-right border-secondary'>";
                 
-            foreach($equipos as $equipo){
+      foreach($equipos as $equipo){
 
-                if($equipo->getTipoEquipo()->getTipo()=="A"){
-                    echo "<div class='row'><div class='col'><a href='fichaequipo.php?id=".$equipo->getId()."' class='text-dark'><h4>".$equipo->getClub()->getNombreCompleto()."<h4></a></div></div>";
-                }
-                else {
-                    echo "<div class='row'><div class='col'><a href='fichaequipo.php?id=".$equipo->getId()."' class='text-dark'><h5>".$equipo->getClub()->getNombreCompleto()." ".$equipo->getTipoEquipo()->getTipo()."</h5></a></div></div>";
-                }
+        if($equipo->getTipoEquipo()->getTipo()=="A"){
+            $tipoEquipo="";
+        }
+        else {
+            $tipoEquipo=$equipo->getTipoEquipo()->getTipo();
+        }
+        echo "<tr>
+        <td><a href='fichaequipo.php?id=".$equipo->getId()."' class='text-dark'>".$club->getNombreCompleto()." ".$tipoEquipo."</a></td>
+        <td><a href='fichacompeticion.php?id=".$equipo->getCompeticion()->getId()."' class='text-dark'>".$equipo->getCompeticion()->getNombre()."</a></td>
+        </tr>";
+      }      
 
-               
-            }
-
-     echo "</div>";         
+     echo "</tbody></table></div></div></div></div>";         
 
 
     }
@@ -1782,7 +2501,7 @@ if(!is_null($competicion)){
     </thead><tbody class='border-top border-right border-secondary'>";
 
     $contador=1;
-    usort($historicoCompeticion, fn($a, $b) => strcmp(2*($a->getGanados())+$a->getEmpatados(), 2*($b->getGanados()+$b->getEmpatados())));
+    usort($historicoCompeticion, fn($a, $b) => (2*($a->getGanados())+$a->getEmpatados() < 2*($b->getGanados()+$b->getEmpatados())) ? 1 : (2*($a->getGanados())+$a->getEmpatados() < 2*($b->getGanados()+$b->getEmpatados()) ? -1 : 0));
     foreach($historicoCompeticion as $historico){
         $jugados=$historico->getGanados()+$historico->getEmpatados()+$historico->getPerdidos();
         $puntos=2*($historico->getGanados())+$historico->getEmpatados();
@@ -1839,7 +2558,7 @@ if(!is_null($competicion)){
     
         foreach($temporadas as $temporada){
             $historicoTemporadas=$entityM->getRepository("HistoricoEquipoCompeticion")->findBy(["competicion"=>$idCompeticion,"temporada"=>$temporada->getId()]);
-            usort($historicoTemporadas, fn($a, $b) => strcmp(2*($a->getGanados())+$a->getEmpatados(), 2*($b->getGanados()+$b->getEmpatados())));
+            usort($historicoCompeticion, fn($a, $b) => (2*($a->getGanados())+$a->getEmpatados() < 2*($b->getGanados()+$b->getEmpatados())) ? 1 : (2*($a->getGanados())+$a->getEmpatados() < 2*($b->getGanados()+$b->getEmpatados()) ? -1 : 0));
             echo "<tr><td>".$temporada->getTemporada()."</td>";
             $historicoTemporadas = array_slice($historicoTemporadas, 0, 5);
             foreach($historicoTemporadas as $historico){
@@ -1881,6 +2600,565 @@ function cargarInputsHidden(){
     foreach($niveles as $nivel){
         echo "<input type='hidden' name='".$nivel->getTipoContrato()."'>";
     }
+}
+
+function cargarInputsHiddenTecnicos(){
+    $entityM=cargar("admin");
+    $paises=$entityM->getRepository("Pais")->findAll();
+    foreach($paises as $pais){
+        echo "<input name='".$pais->getNombre()."' type='hidden'>";
+    }
+
+    $puestos=$entityM->getRepository("PuestoCuerpoTecnico")->findAll();
+
+    foreach($puestos as $puesto){
+        echo "<input name='".$puesto->getPuesto()."' type='hidden'>";
+    }
+}
+
+
+function cargarEquiposSinEntrenadorGrande($genero){
+    $entityM=cargar("admin");
+
+    $equipos=$entityM->getRepository("Equipo")->findBy(["genero"=>$genero]);
+    $equiposSinEntrenador=[];
+    foreach($equipos as $equipo){
+        $entrenadorEncontrado=false;
+        foreach($equipo->getCuerpoTecnico() as $tecnico){
+            if($tecnico->getPuesto()->getPuesto()=="Entrenador"){
+                $entrenadorEncontrado=true;
+            }
+        }
+
+        if($entrenadorEncontrado==false){
+            array_push($equiposSinEntrenador,$equipo);
+        }
+    }
+
+
+    echo "<div class='table-responsive'>
+    <table class='table'>
+    <thead class='bg-primary'>
+    <tr>
+    <th>#</th>
+    <th>Equipo</th>
+    <th>País</th>
+    <th>Competición</th>
+    </tr>
+    </thead><tbody class='border-top border-right border-secondary'>";
+
+    usort($equiposSinEntrenador, fn($a, $b) => strcmp($b->getFechaSinEntrenador(),$a->getFechaSinEntrenador()));
+    foreach($equiposSinEntrenador as $equipo){
+
+        if($equipo->getTipoEquipo()->getTipo()=="A"){
+            $equipoStr=$equipo->getClub()->getNombreCompleto();
+        }
+        else {
+            $equipoStr=$equipo->getClub()->getNombreCompleto()." ".$equipo->getTipoEquipo()->getTipo();
+        }
+
+        if(file_exists("img/clubs/".$equipo->getClub()->getId()."mini.jpg")){
+            $imagen="<img src='img/clubs/".$equipo->getClub()->getId()."mini.jpg' class='img-fluid'/>";
+        }
+        else {
+            $imagen="<img src='img/clubs/defectomini.jpg' class='img-fluid'/>";
+        }
+
+
+
+        echo "<tr>
+        <td>$imagen</td>
+        <td><a href='fichaequipo.php?id=".$equipo->getId()."' class='text-dark'>$equipoStr</a></td>
+        <td>".$equipo->getClub()->getPais()->getNombre()."</td>
+        <td><a href='fichacompeticion.php?id=".$equipo->getCompeticion()->getId()."' class='text-dark'>".$equipo->getCompeticion()->getNombre()."</a></td>
+        </tr>";
+    }
+
+    echo "</tbody></table></div>";
+
+}
+
+
+function registrarUsuario(){
+    $entityM=cargar("admin");
+    $email = filter_input(INPUT_POST,"email");
+    $contraseña=filter_input(INPUT_POST,"contraseña1");
+    $nombre=filter_input(INPUT_POST,"nombre");
+    $apellido1=filter_input(INPUT_POST,"apellido1");
+    
+    $usuarioExistente=$entityM->getRepository("Usuario")->findOneBy(["email"=>$email]);
+
+    $tipoUsuario=$entityM->getRepository("TipoUsuario")->findOneBy(["tipoUsuario"=>"registrado"]);
+    $contraseña=password_hash($contraseña,PASSWORD_DEFAULT);
+
+    $confirmacion=randomURL(20);
+    if(is_null($usuarioExistente)){
+        $usuario=new Usuario($email,$contraseña,$tipoUsuario,$confirmacion,$nombre,$apellido1);
+
+        if($apellido2=filter_input(INPUT_POST,"apellido2")){
+            $usuario->setApellido2($apellido2);
+        }
+        $entityM->persist($usuario);
+        $entityM->flush();
+        enviarEmailConfirmacion($usuario);
+        return true;
+    }
+    else {
+        return false;
+    }
+    
+
+
+    
+}
+
+function enviarEmailConfirmacion($usuario){
+    $mail=new PHPMailer;
+    $mail->isSMTP();
+    $mail->SMTPDebug=0;
+    $mail->SMTPAuth=true;
+    $mail->SMTPSecure="tls";
+    $mail->Host="smtp.gmail.com";
+    $mail->Port=587;
+    $mail->CharSet='UTF-8';
+    $mail->Username="phptestiesteis@gmail.com"; 
+    $mail->Password="duhfjyzcmfvxdnnt"; 
+    $mail->setFrom("phptestiesteis@gmail.com");
+    $mail->Subject=ucfirst("Confirma tu cuenta");
+    $mail->isHTML(true);
+    $confirmacion=$usuario->getConfirmacion();
+    $mail->Body='Haz click en el siguiente enlace para activar tu cuenta: <a href="http://192.168.0.11/www/confirmacion.php?id='.$confirmacion.'">Confirma tu cuenta</a>';
+    $mail->addAddress($usuario->getEmail());
+    if($mail->send()){
+       
+        return true;
+    }
+
+    return false;
+    
+}
+
+
+function randomURL($URLlength = 8) {
+    $charray = array_merge(range('a','z'), range('0','9'));
+    $max = count($charray) - 1;
+    $url="";
+    for ($i = 0; $i < $URLlength; $i++) {
+        $randomChar = mt_rand(0, $max);
+        $url .= $charray[$randomChar];
+    }
+    return $url;
+}
+
+
+function confirmarCuenta(){
+    $entityM=cargar("admin");
+    $usuario=$entityM->getRepository("Usuario")->findOneBy(["confirmacion"=>$_GET["id"]]);
+
+    if(!is_null($usuario)){
+        $usuario->setEstado('C');
+        $entityM->flush();
+
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function comprobarUsuario(){
+    $entityM=cargar("admin");
+
+    $usuario=$entityM->getRepository("Usuario")->findOneBy(["email"=>filter_input(INPUT_POST,"email")]);
+    $contraseña=filter_input(INPUT_POST,"contraseña");
+    if(!is_null($usuario)){
+        
+        if(password_verify($contraseña,$usuario->getContraseña())){
+            if($usuario->getEstado()=="C"){
+                session_start();
+                $datosUsuario=[
+                    "id"=>$usuario->getId(),
+                    "email"=>$usuario->getEmail(),
+                    "tipoUsuario"=>$usuario->getTipoUsuario()->getTipoUsuario(),
+                    "nombre"=>$usuario->getNombre(),
+                    "apellido1"=>$usuario->getApellido1(),
+                    "apellido2"=>$usuario->getApellido2(),
+                    "caducidad"=>$usuario->getCaducidadSuscripcion()
+                ];
+    
+                $_SESSION["usuario"]=$datosUsuario;
+                return "sesionI";
+            }
+            else if($usuario->getEstado()=="D"){
+                return "D";
+            }
+            else {
+                return "NC";
+            }
+            
+        }
+    }
+    return false;
+}
+
+function cargarNoticiasUsuario(){
+    $entityM=cargar("admin");
+    $noticias=$entityM->getRepository("Noticia")->findBy(["autor"=>$_SESSION["usuario"]["id"]]);
+    usort($noticias, fn($b, $a) => strcmp(date_format($a->getFecha(),"d-m-Y"), date_format($b->getFecha(),"d-m-Y")));
+    echo "<div class='table-responsive'>
+    <table class='table'>
+    <thead class='bg-primary'>
+    <tr>
+    <th class='text-center'>Noticia completa</th>
+    <th>Titular</th>
+    <th class='text-center'>Fecha</th>
+    <th class='text-center'>Acción</th>
+    </tr>
+    </thead><tbody class='border-top border-right border-secondary'>";
+
+
+    foreach($noticias as $noticia){
+        echo "<tr>
+        <td class='text-center'><a href='noticiacompleta.php?id=".$noticia->getId()."' class='text-secondary'>Ver</a></td>
+        <td>".$noticia->getTitular()."</td>
+        <td class='text-center'>".date_format($noticia->getFecha(),"d-m-Y")."</td>
+        <td class='text-center'>
+        <form action='publicarnoticia.php' method='POST'><button class='fa fa-edit'></button><input type='hidden' name='noticia' value='".$noticia->getId()."'></form>
+        <form action='borrar.php' class='text-secondary' method='POST'><button class='fa fa-trash'></button>
+        <input type='hidden' name='noticia' value='".$noticia->getId()."'></form></td>
+        </tr>";
+    }
+
+    echo "</tbody></table></div>";
+
+    
+}
+
+function publicarNoticia(){
+    $entityM=cargar("admin");
+
+    if(isset($_POST["editada"])){
+       $noticiaEditada=$entityM->find("Noticia",$_POST["editada"]);
+       $titular=ucfirst(filter_input(INPUT_POST,"titular"));
+       $noticia=ucfirst(filter_input(INPUT_POST,"noticia"));
+       $pieFoto=ucfirst(filter_input(INPUT_POST,"piefoto"));
+       $competicion=$entityM->find("Competicion",filter_input(INPUT_POST,"selectCompeticiones"));
+       $noticiaEditada->setTitular($titular);
+       $noticiaEditada->setNoticia($noticia);
+       $noticiaEditada->setCompeticion($competicion);
+       $noticiaEditada->setDescripcionImagen($pieFoto);
+       $entityM->flush();
+    }
+    else {
+        $autor=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+    $fecha=date("Y-m-d");
+    $titular=ucfirst(filter_input(INPUT_POST,"titular"));
+    $noticia=ucfirst(filter_input(INPUT_POST,"noticia"));
+    
+    
+    $competicion=$entityM->find("Competicion",filter_input(INPUT_POST,"selectCompeticiones"));
+    $nuevaNoticia=new Noticia($titular,$noticia,$competicion,$autor,new Datetime($fecha));
+    $pieFoto=ucfirst(filter_input(INPUT_POST,"piefoto"));
+    $noticiaEditada->setDescripcionImagen($pieFoto);
+    $entityM->persist($nuevaNoticia);
+    $entityM->flush();
+
+
+    $imagen = $nuevaNoticia->getId().".jpg";
+    
+    $tmp=$_FILES["imagen"];
+    $destino = "img/noticias/$imagen";
+    move_uploaded_file($tmp["tmp_name"], $destino);
+    }
+    
+    
+}
+
+function cargarCompeticiones($competicionId=null){
+    $entityM=cargar("admin");
+    $competiciones=$entityM->getRepository("Competicion")->findAll();
+    foreach($competiciones as $competicion){
+        
+            if($competicionId==$competicion->getId()){
+                echo "<option value='".$competicion->getId()."' selected>".$competicion->getNombre()."</option>";
+            }
+        
+        else {
+            echo "<option value='".$competicion->getId()."'>".$competicion->getNombre()."</option>";
+        }
+        
+    }
+}
+
+function borrarNoticia(){
+    $entityM=cargar("admin");
+    $noticia=$entityM->find("Noticia", $_POST["noticia"]);
+    
+    $entityM->remove($noticia);
+    $entityM->flush();
+}
+
+function cargarDatosNoticia(){
+    $entityM=cargar("admin");
+    $noticia=$entityM->find("Noticia", $_POST["noticia"]);
+    return $noticia;
+}
+
+function desactivarPerfil(){
+    $entityM=cargar("admin");
+    $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+    $usuario->setEstado("D");
+    $entityM->flush();
+}
+
+function reenviarEmail(){
+    $entityM=cargar("admin");
+    $usuario=$entityM->getRepository("Usuario")->findOneBy(["email"=>filter_input(INPUT_POST,"emailreenvio")]);
+
+    if(!is_null($usuario)){
+        if($usuario->getEstado=="NC"){
+            enviarEmailConfirmacion($usuario);
+        }
+        
+    }
+}
+
+function modificarPerfil(){
+    $entityM=cargar("admin");
+    $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+    $nombre=filter_input(INPUT_POST,"nombre");
+    $apellido1=filter_input(INPUT_POST,"apellido1");
+    if(isset($_POST["apellido2"])){
+        $apellido2=filter_input(INPUT_POST,"apellido2");
+        $usuario->setApellido2($apellido2);
+        $_SESSION["usuario"]["apellido2"]=$apellido2;
+    }
+    $usuario->setNombre($nombre);
+    $usuario->setApellido1($apellido1);
+
+    $_SESSION["usuario"]["nombre"]=$nombre;
+    $_SESSION["usuario"]["apellido1"]=$apellido1;
+    $entityM->flush();
+    
+}
+
+
+function cargarJugadoresFavoritos(){
+    $entityM=cargar("admin");
+    $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+    $jugadores=$usuario->getJugadoresFavoritos();
+    echo "<div class='table-responsive'>
+    <table class='table'>
+    <thead class='bg-primary'>
+    <tr>
+    <th class='text-center'>#</th>
+    <th>Jugador</th>
+    <th>Puesto</th>
+    <th>Edad</th>
+    <th>Nacionalidad</th>
+    <th>Género</th>
+    <th>Equipo</th>
+    <th>Nivel</th>
+    </tr>
+    </thead><tbody class='border-top border-right border-secondary'>";
+    $jugadores=iterator_to_array($jugadores);
+    usort($jugadores, fn($a, $b) => ($a->getReputacion() < $b->getReputacion()) ? 1 : (($a->getReputacion() > $b->getReputacion()) ? -1 : 0));
+    foreach($jugadores as $jugador){
+
+        if(file_exists("img/jugadores/".$jugador->getId()."mini.jpg")){
+            $imagen="<img src='img/jugadores/".$jugador->getId()."mini.jpg' class='img-fluid'/>";
+        }
+        else {
+            $imagen="<img src='img/jugadores/defectomini.jpg' class='img-fluid'/>";
+        }
+
+        if($jugador->getGenero()=="M"){
+            $genero="Masculino";
+        }
+        else {
+            $genero="Femenino";
+        }
+
+        $edad = DateTime::createFromFormat('Y-m-d', date_format($jugador->getFechaNacimiento(),"Y-m-d"))
+        ->diff(new DateTime('now'))
+        ->y;
+
+        if(!is_null($jugador->getEquipoActual())){
+            
+            if($jugador->getEquipoActual()->getTipoEquipo()->getTipo()=="A"){
+                $equipo="<a href='fichaequipo.php?id=".$jugador->getEquipoActual()->getId()."' class='text-dark'>".$jugador->getEquipoActual()->getClub()->getNombreCompleto()." </a>";
+            }
+            else {
+                $equipo="<a href='fichaequipo.php?id=".$jugador->getEquipoActual()->getId()."' class='text-dark'>".$jugador->getEquipoActual()->getClub()->getNombreCompleto()." ".$jugador->getEquipoActual()->getTipoEquipo()->getTipo()." </a>";
+            }
+        }
+        else {
+            $equipo="Sin equipo";
+        }
+        
+        foreach($jugador->getPuestos() as $puesto){
+
+            if($puesto==$jugador->getPuestos()[0]){
+                $puestosStr=$puesto->getPuestoCorto();
+            }
+            else {
+                $puestosStr=$puestosStr."/".$puesto->getPuestoCorto();
+            }
+        }
+        echo "<tr>
+        <td>$imagen</td>
+        <td><a href='fichajugador.php?id=".$jugador->getId()."' class='text-dark'>".$jugador->getNombre()." ".$jugador->getApellido1()." ".$jugador->getApellido2()."</a></td>
+        <td>$puestosStr</td>
+        <td>$edad</td>
+        <td>".$jugador->getPais()->getNacionalidad()."</td>
+        <td>$genero</td>
+        <td>$equipo</td>
+        <td>".$jugador->getTipoContrato()->getTipoContrato()."</td>
+        </tr>";
+
+    }
+
+    echo "</tbody></table></div>";
+}
+
+function cargarTecnicosFavoritos(){
+    $entityM=cargar("admin");
+    $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+    $tecnicos=$usuario->getTecnicosFavoritos();
+
+    $tecnicos=iterator_to_array($tecnicos);
+    usort($tecnicos, fn($a, $b) => ($a->getReputacion() < $b->getReputacion()) ? 1 : (($a->getReputacion() > $b->getReputacion()) ? -1 : 0));
+        
+        echo "<div class='table-responsive'>
+        <table class='table text-center border-secondary'>
+                <thead class='bg-primary'>
+                <th>#</th>
+                <th>Técnico</th>
+                <th>Trabajo</th>
+                <th>Edad</th>
+                <th>Nacionalidad</th>
+                <th>Género</th>
+                <th>Equipo</th>
+                <th>Nivel</th>
+                </thead><tbody class='border-top border-right border-secondary'>";
+
+            foreach($tecnicos as $tecnico){
+
+                if(file_exists("img/tecnicos/".$tecnico->getId()."mini.jpg")){
+                    $imagen="<img src='img/tecnicos/".$tecnico->getId()."mini.jpg' class='img-fluid'/>";
+                }
+                else {
+                    $imagen="<img src='img/tecnicos/defectomini.jpg' class='img-fluid'/>";
+                }
+
+                if($tecnico->getGenero()=="M"){
+                    $genero="Masculino";
+                }
+                else {
+                    $genero="Femenino";
+                }
+
+                $edad = DateTime::createFromFormat('Y-m-d', date_format($tecnico->getFechaNacimiento(),"Y-m-d"))
+                ->diff(new DateTime('now'))
+                ->y;
+
+                if(!is_null($tecnico->getEquipoActual())){
+                    
+                    if($tecnico->getEquipoActual()->getTipoEquipo()->getTipo()=="A"){
+                        $equipo="<a href='fichaequipo.php?id=".$tecnico->getEquipoActual()->getId()."' class='text-dark'>".$tecnico->getEquipoActual()->getClub()->getNombreCompleto()." </a>";
+                    }
+                    else {
+                        $equipo="<a href='fichaequipo.php?id=".$tecnico->getEquipoActual()->getId()."' class='text-dark'>".$tecnico->getEquipoActual()->getClub()->getNombreCompleto()." ".$tecnico->getEquipoActual()->getTipoEquipo()->getTipo()." </a>";
+                    }
+                }
+                else {
+                    $equipo="Sin equipo";
+                }
+
+                echo "<tr>
+                <td>$imagen</td>
+                <td><a href='fichatecnico.php?id=".$tecnico->getId()."' class='text-dark'>".$tecnico->getNombre()." ".$tecnico->getApellido1()." ".$tecnico->getApellido2()."</a></td>
+                <td>".$tecnico->getPuesto()->getPuesto()."</td>
+                <td>$edad</td>
+                <td>".$tecnico->getPais()->getNacionalidad()."</td>
+                <td>$genero</td>
+                <td>$equipo</td>
+                <td>".$tecnico->getTipoContrato()->getTipoContrato()."</td>
+                </tr>";
+            }
+    echo "</tbody></table></div>";
+
+}
+
+
+function cargarEquiposFavoritos(){
+    $entityM=cargar("admin");
+    $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+    $equipos=$usuario->getEquiposFavoritos();
+
+    $equipos=iterator_to_array($equipos);
+    usort($equipos, fn($a, $b) => ($a->getReputacion() < $b->getReputacion()) ? 1 : (($a->getReputacion() > $b->getReputacion()) ? -1 : 0));
+
+    echo "<div class='table-responsive'>
+    <table class='table text-center border-top border-secondary border-right'>
+            <thead class='bg-primary'>
+            <th>#</th>
+            <th>Equipo</th>
+            <th>País</th>
+            <th>Género</th>
+            <th>Entrenador</th>
+            <th>Competición</th>
+            </thead><tbody class='border-top border-right border-secondary'>";
+    foreach($equipos as $equipo){
+
+
+        if($equipo->getTipoEquipo()->getTipo()=="A"){
+            $equipoStr=$equipo->getClub()->getNombreCompleto();
+        }
+        else {
+            $equipoStr=$equipo->getClub()->getNombreCompleto()." ".$equipo->getTipoEquipo()->getTipo();
+        }
+
+        if($equipo->getGenero()=="M"){
+            $genero="Masculino";
+        }
+        else {
+            $genero="Femenino";
+        }
+        $entrenadorEncontrado=false;
+        foreach($equipo->getCuerpoTecnico() as $tecnico){
+
+            if($tecnico->getPuesto()->getPuesto()=="Entrenador"){
+                $entrenadorEncontrado=true;
+                $entrenador=$tecnico;
+            }
+        }
+
+        if($entrenadorEncontrado){
+            if(!is_null($entrenador->getApodo())){
+                $entrenador="<a href='fichatecnico.php?id=".$entrenador->getId()."' class='text-dark'>".$entrenador->getApodo()."</a>";
+            }
+            else {
+                $entrenador="<a href='fichatecnico.php?id=".$entrenador->getId()."' class='text-dark'>".$entrenador->getNombre()." ".$entrenador->getApellido1()."</a>";
+            }
+            
+        }
+        else {
+            $entrenador="Sin entrenador";
+        }
+
+        echo "<tr>
+        <td><img src='img/clubs/".$equipo->getClub()->getId()."mini.jpg'/></td>
+        <td><a href='fichaequipo.php?id=".$equipo->getId()."' class='text-dark'>$equipoStr</a></td>
+        <td>".$equipo->getClub()->getPais()->getNombre()."</td>
+        <td>$genero</td>
+        <td>$entrenador</td>
+        <td><a href='fichacompeticion.php?id=".$equipo->getCompeticion()->getId()."' class='text-dark'>".$equipo->getCompeticion()->getNombre()."</a></td>
+        </tr>";
+    }
+
+    echo "</tbody></table></div>";
+
 }
 
 ?>

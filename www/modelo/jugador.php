@@ -86,6 +86,11 @@ class Jugador {
      * inverseJoinColumns={@ORM\JoinColumn(name="Puesto", referencedColumnName="Id_Puesto_Jugador")})
      */
     private $puestos; //array N:M
+
+    /**
+    * @ORM\ManyToMany(targetEntity="Usuario", mappedBy="jugadoresFavoritos")
+    */
+    private $usuarios;
     
     function __construct($nombre, $apellido1, $fechaNacimiento, $pais, $tipoContrato,$reputacion) {
         $this->nombre = $nombre;
@@ -95,6 +100,7 @@ class Jugador {
         $this->tipoContrato = $tipoContrato;
         $this->reputacion=$reputacion;
         $this->puestos=new Doctrine\Common\Collections\ArrayCollection();
+        $this->usuarios=new Doctrine\Common\Collections\ArrayCollection();
     }
 
     
@@ -141,6 +147,10 @@ class Jugador {
         return $this->tipoContrato;
     }
 
+    function getGenero() {
+        return $this->genero;
+    }
+
     function getEquipoActual() {
         return $this->equipoActual;
     }
@@ -174,6 +184,10 @@ class Jugador {
 
     function setPais($pais) {
         $this->pais = $pais;
+    }
+
+    function setGenero($genero) {
+        $this->genero = $genero;
     }
 
     function setTipoContrato($tipoContrato) {
@@ -218,6 +232,22 @@ class Jugador {
 
     function setReputacion($reputacion) {
         $this->reputacion = $reputacion;
+    }
+
+    function getUltimoCambioEquipo() {
+        return $this->ultimoCambioEquipo;
+    }
+
+    function getUsuarios() {
+        return $this->usuarios;
+    }
+
+    function setUltimoCambioEquipo($ultimoCambioEquipo) {
+        $this->ultimoCambioEquipo = $ultimoCambioEquipo;
+    }
+
+    function setUsuarios($usuarios) {
+        $this->usuarios = $usuarios;
     }
 
 

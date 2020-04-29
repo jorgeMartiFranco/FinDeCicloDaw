@@ -12,6 +12,12 @@ class ComposerStaticInit78f99d988bfc44a2a9c828e44f0ba1b1
     );
 
     public static $prefixLengthsPsr4 = array (
+        'k' => 
+        array (
+            'kartik\\plugins\\markdown-editor\\' => 31,
+            'kartik\\editors\\' => 15,
+            'kartik\\base\\' => 12,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php73\\' => 23,
@@ -23,6 +29,7 @@ class ComposerStaticInit78f99d988bfc44a2a9c828e44f0ba1b1
         array (
             'Psr\\Container\\' => 14,
             'PackageVersions\\' => 16,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'D' => 
         array (
@@ -40,6 +47,18 @@ class ComposerStaticInit78f99d988bfc44a2a9c828e44f0ba1b1
     );
 
     public static $prefixDirsPsr4 = array (
+        'kartik\\plugins\\markdown-editor\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/krajee-markdown-editor',
+        ),
+        'kartik\\editors\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-editors/src',
+        ),
+        'kartik\\base\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-krajee-base/src',
+        ),
         'Symfony\\Polyfill\\Php73\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php73',
@@ -63,6 +82,10 @@ class ComposerStaticInit78f99d988bfc44a2a9c828e44f0ba1b1
         'PackageVersions\\' => 
         array (
             0 => __DIR__ . '/..' . '/ocramius/package-versions/src/PackageVersions',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'Doctrine\\Persistence\\' => 
         array (

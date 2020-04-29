@@ -32,12 +32,20 @@ class Noticia {
      * @ORM\JoinColumn(name="Competicion",referencedColumnName="Id_Competicion")
      */
     private $competicion;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Usuario")
+     * @ORM\JoinColumn(name="Autor",referencedColumnName="Id_Usuario")
+     */
+    private $autor;
     
     
-    function __construct($titular, $noticia, $seccion) {
+    function __construct($titular, $noticia, $competicion,$autor,$fecha) {
         $this->titular = $titular;
         $this->noticia = $noticia;
-        $this->seccion = $seccion;
+        $this->competicion = $competicion;
+        $this->autor=$autor;
+        $this->fecha=$fecha;
     }
     
     
@@ -60,6 +68,11 @@ class Noticia {
     function getFecha() {
         return $this->fecha;
     }
+
+    function getAutor() {
+        return $this->autor;
+    }
+
 
    
 
@@ -86,6 +99,10 @@ class Noticia {
 
     function setCompeticion($competicion) {
         $this->competicion = $competicion;
+    }
+
+    function setAutor($autor) {
+        $this->autor = $autor;
     }
 
 

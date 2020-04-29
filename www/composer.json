@@ -1,5 +1,9 @@
 {
     "require": {
-        "doctrine/orm": "*"
+        "doctrine/orm": "*",
+        "phpmailer/phpmailer": "^6.1",
+        "kartik-v/yii2-editors": "@dev",
+        "kartik-v/krajee-markdown-editor": "@dev"
     }
+
 }
