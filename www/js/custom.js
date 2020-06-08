@@ -41,6 +41,7 @@ $(document).ready(function() {
 
     });
 
+
     $("#selectLibres").change(function(){
         var genero=$("#selectLibres").val();
         var tbodyLibres=$("#tablaLibres tbody");
@@ -172,5 +173,112 @@ function ResizeImage() {
 
 });
 
+function jugadorFavorito(idJugador,accion){
 
+    var datos={
+        idJugador:idJugador,
+        accion:accion
+    };
+    //peticion a servidor
+    $.post('favoritos.php', datos ,function(dato) {
+       
+        var dato=JSON.parse(dato);
+        
+        if(dato.resultado=="true"){
+            var icono=$("#btnFavorito i");
+            var boton=$("#btnFavorito");
+            if(accion=="añadir"){
+               
+
+                icono.removeClass();
+                icono.addClass("fa fa-star text-danger")
+                boton.attr("onclick","jugadorFavorito("+idJugador+",'eliminar')");
+            }
+            else {
+                icono.removeClass();
+                icono.addClass("fa fa-star-o text-danger")
+                boton.attr("onclick","jugadorFavorito("+idJugador+",'añadir')");
+            }
+        }
+
+    });
+}
+
+
+function tecnicoFavorito(idTecnico,accion){
+
+    var datos={
+        idTecnico:idTecnico,
+        accion:accion
+    };
+    //peticion a servidor
+    $.post('favoritos.php', datos ,function(dato) {
+      
+        var dato=JSON.parse(dato);
+        
+        if(dato.resultado=="true"){
+            var icono=$("#btnFavorito i");
+            var boton=$("#btnFavorito");
+            if(accion=="añadir"){
+               
+
+                icono.removeClass();
+                icono.addClass("fa fa-star text-danger")
+                boton.attr("onclick","tecnicoFavorito("+idTecnico+",'eliminar')");
+            }
+            else {
+                icono.removeClass();
+                icono.addClass("fa fa-star-o text-danger")
+                boton.attr("onclick","tecnicoFavorito("+idTecnico+",'añadir')");
+            }
+        }
+
+    });
+}
+
+function equipoFavorito(idEquipo,accion){
+
+    var datos={
+        idEquipo:idEquipo,
+        accion:accion
+    };
+    //peticion a servidor
+    $.post('favoritos.php', datos ,function(dato) {
+       
+        var dato=JSON.parse(dato);
+        
+        if(dato.resultado=="true"){
+            var icono=$("#btnFavorito i");
+            var boton=$("#btnFavorito");
+            if(accion=="añadir"){
+               
+
+                icono.removeClass();
+                icono.addClass("fa fa-star text-danger")
+                boton.attr("onclick","equipoFavorito("+idEquipo+",'eliminar')");
+            }
+            else {
+                icono.removeClass();
+                icono.addClass("fa fa-star-o text-danger")
+                boton.attr("onclick","equipoFavorito("+idEquipo+",'añadir')");
+            }
+        }
+
+    });
+}
+
+
+function cambiarTipoUsuario(idUsuario){
+
+    var idTipoUsuario=$("#selectUsuario"+idUsuario).val();
+   
+    var datos={
+        idUsuario:idUsuario,
+        idTipoUsuario:idTipoUsuario
+    };
+    //peticion a servidor
+    $.post('cambiarTipoUsuario.php', datos ,function(dato) {
+      alert(dato);
+       });
+}
 

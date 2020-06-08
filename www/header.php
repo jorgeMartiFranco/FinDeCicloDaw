@@ -33,7 +33,7 @@ if($_SESSION["usuario"]["tipoUsuario"]=="noticias" or $_SESSION["usuario"]["tipo
 
 if($_SESSION["usuario"]["tipoUsuario"]=="registros" or $_SESSION["usuario"]["tipoUsuario"]=="administrador" or $_SESSION["usuario"]["tipoUsuario"]=="superusuario"){
 ?>
-<a class="btn  btn-outline-info btn-lg" href="#">
+<a class="btn  btn-outline-info btn-lg" href="datos.php">
   Acceso datos
   </a>
 <?php
@@ -41,7 +41,7 @@ if($_SESSION["usuario"]["tipoUsuario"]=="registros" or $_SESSION["usuario"]["tip
 
 if($_SESSION["usuario"]["tipoUsuario"]=="superusuario"){
   ?>
-  <a class="btn  btn-outline-info btn-lg" href="#">
+  <a class="btn  btn-outline-info btn-lg" href="usuarios.php">
   Acceso usuarios
   </a>
   <?php

@@ -183,10 +183,7 @@ cargarTecnicosFavoritos();
 </div>
 
 
-
-
-
-    <?php
+ <?php
     
     } else {
         ?>

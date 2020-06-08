@@ -620,6 +620,30 @@ function cargarDatosJugador($idJugador){
     if(!is_null($jugador->getInstagram())){
         $instagram=" <a  href='".$jugador->getInstagram()."' target='_blank'><img src='img/redessociales/instagram.jpg' class='img-fluid mx-1'/></a>";
     }
+
+    if(isset($_SESSION["usuario"])){
+        $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+        $favoritoEncontrado=false;
+        foreach($jugador->getUsuarios() as $usuarioActual){
+            if($usuarioActual==$usuario){
+                $favoritoEncontrado=true;
+            }
+
+        }
+        $idJugador=$jugador->getId();
+        
+        if($favoritoEncontrado){
+            $boton="<button class='btn btn-link'  id='btnFavorito' onclick=jugadorFavorito($idJugador,'eliminar')><i class='fa fa-star text-danger' aria-hidden='true'></i></button>";
+        }
+        else {
+            $boton="<button class='btn btn-link' id='btnFavorito' onclick=jugadorFavorito($idJugador,'añadir')><i class='fa fa-star-o text-danger' aria-hidden='true'></i></button>";
+        }
+
+    }
+    else {
+        $boton="";
+    }
+    
     
 
 
@@ -628,7 +652,7 @@ function cargarDatosJugador($idJugador){
                 <h1 class='text-secondary mb-1'>Ficha de jugador</h1>
             </div>
     <div class='row px-2 borderEspecial '><div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-5 text-center ' >$imagen</div>
-                             <div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 '><div class='row '><div class='col '><h3 class='text-secondary'>".$jugador->getNombre()." ".$jugador->getApellido1()." ".$jugador->getApellido2()." ".$apodo."</h3></div>
+                             <div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 '><div class='row '><div class='col ' ><h3 class='text-secondary'>".$jugador->getNombre()." ".$jugador->getApellido1()." ".$jugador->getApellido2()." ".$apodo."$boton</h3></div>
                              </div>
                              <div class='row'><div class='col'><h5>".$puestos."</h5></div></div>
                              <div class='row'><div class='col'><h6>Fecha de nacimiento: ".date_format($jugador->getFechaNacimiento(),"d-m-Y")."</h6></div></div>
@@ -1985,6 +2009,28 @@ function cargarDatosTecnico($idTecnico){
 
     $puestos="";
 
+    if(isset($_SESSION["usuario"])){
+        $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+        $favoritoEncontrado=false;
+        foreach($tecnico->getUsuarios() as $usuarioActual){
+            if($usuarioActual==$usuario){
+                $favoritoEncontrado=true;
+            }
+
+        }
+        $idTecnico=$tecnico->getId();
+        
+        if($favoritoEncontrado){
+            $boton="<button class='btn btn-link'  id='btnFavorito' onclick=tecnicoFavorito($idTecnico,'eliminar')><i class='fa fa-star text-danger' aria-hidden='true'></i></button>";
+        }
+        else {
+            $boton="<button class='btn btn-link' id='btnFavorito' onclick=tecnicoFavorito($idTecnico,'añadir')><i class='fa fa-star-o text-danger' aria-hidden='true'></i></button>";
+        }
+
+    }
+    else {
+        $boton="";
+    }
     
 
     $twitter="";
@@ -2014,7 +2060,7 @@ function cargarDatosTecnico($idTecnico){
                 <h1 class='text-secondary mb-1'>Ficha de técnico</h1>
             </div>
     <div class='row px-2 borderEspecial '><div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-5 text-center ' >$imagen</div>
-                             <div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 '><div class='row '><div class='col '><h3 class='text-secondary'>".$tecnico->getNombre()." ".$tecnico->getApellido1()." ".$tecnico->getApellido2()." ".$apodo."</h3></div>
+                             <div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 '><div class='row '><div class='col '><h3 class='text-secondary'>".$tecnico->getNombre()." ".$tecnico->getApellido1()." ".$tecnico->getApellido2()." ".$apodo."$boton</h3></div>
                              </div>
                              <div class='row'><div class='col'><h5>".$tecnico->getPuesto()->getPuesto()."</h5></div></div>
                              <div class='row'><div class='col'><h6>Fecha de nacimiento: ".date_format($tecnico->getFechaNacimiento(),"d-m-Y")."</h6></div></div>
@@ -2142,15 +2188,36 @@ function cargarDatosEquipo($idEquipo){
         $temporadasEquipo=$entityM->getRepository("HistoricoEquipoCompeticion")->findAll();
         usort($temporadasEquipo, fn($a, $b) => strcmp($b->getTemporada()->getTemporada(), $a->getTemporada()->getTemporada()));
 
-        echo "
-        <section class='row'";
-        echo "><div class='col'>
+        if(isset($_SESSION["usuario"])){
+            $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+            $favoritoEncontrado=false;
+            foreach($equipo->getUsuarios() as $usuarioActual){
+                if($usuarioActual==$usuario){
+                    $favoritoEncontrado=true;
+                }
+    
+            }
+            $idEquipo=$equipo->getId();
+            
+            if($favoritoEncontrado){
+                $boton="<button class='btn btn-link'  id='btnFavorito' onclick=equipoFavorito($idEquipo,'eliminar')><i class='fa fa-star text-danger' aria-hidden='true'></i></button>";
+            }
+            else {
+                $boton="<button class='btn btn-link' id='btnFavorito' onclick=equipoFavorito($idEquipo,'añadir')><i class='fa fa-star-o text-danger' aria-hidden='true'></i></button>";
+            }
+    
+        }
+        else {
+            $boton="";
+        }
+       
+       echo "
         <div class='row'>
     <div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 text-center mt-5'>
                 <h1 class='text-secondary mb-1'>Ficha de equipo</h1>
             </div></div>
     <div class='row px-2 borderEspecial'><div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-5 text-center '><div class='col'>$imagen</div></div>
-                             <div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 '><div class='row '><div class='col '><h3 class='text-secondary'>".$equipoStr."</h3></div></div>
+                             <div class='col-xl-4 col-lg-4 col-md-12 col-sm-12 '><div class='row '><div class='col '><h3 class='text-secondary'>".$equipoStr.$boton."</h3></div></div>
                             <div class='row'><div class='col'><h6>División: <a href='fichacompeticion.php?id=".$equipo->getCompeticion()->getId()."' class='text-dark'>".$equipo->getCompeticion()->getNombre()."</a></h6></div></div>
                              <div class='row'><div class='col'><h6>Jugadores en plantilla: ".count($jugadores)."</h6></div></div>";
                              
@@ -2202,9 +2269,10 @@ function cargarDatosEquipo($idEquipo){
             
                 echo "
                 
-                </tbody></table></div></div></div></div></section>";
+                </tbody></table></div></div></div>";
                 
-            }         
+            }
+                 
 
     $plantilla=cargarPlantilla($jugadores);
     echo $plantilla;
@@ -2263,7 +2331,7 @@ function cargarCuerpoTecnico($tecnicos){
             }
 
 
-            $tecnicosStr=$tecnicosStr. "</tbody></table></div></div></section>";    
+            $tecnicosStr=$tecnicosStr. "</tbody></table></div></div></section></div>";    
     return $tecnicosStr;
 }
 
@@ -2357,7 +2425,7 @@ function cargarEquiposSinEntrenador(){
     }
 
 
-    usort($equiposSinEntrenador, fn($a, $b) => strcmp($b->getFechaSinEntrenador(), $a->getFechaSinEntrenador()));
+    usort($equiposSinEntrenador, fn($a, $b) => strcmp(date_format($b->getFechaSinEntrenador(),"Y-m-d"), date_format($a->getFechaSinEntrenador(),"Y-m-d")));
     $equiposSinEntrenador = array_slice($equiposSinEntrenador, 0, 9);
 
     echo "<div class='table-responsive'>
@@ -2647,7 +2715,7 @@ function cargarEquiposSinEntrenadorGrande($genero){
     </tr>
     </thead><tbody class='border-top border-right border-secondary'>";
 
-    usort($equiposSinEntrenador, fn($a, $b) => strcmp($b->getFechaSinEntrenador(),$a->getFechaSinEntrenador()));
+    usort($equiposSinEntrenador, fn($a, $b) => strcmp(date_format($b->getFechaSinEntrenador(),"Y-m-d"),date_format($a->getFechaSinEntrenador(),"Y-m-d")));
     foreach($equiposSinEntrenador as $equipo){
 
         if($equipo->getTipoEquipo()->getTipo()=="A"){
@@ -3161,4 +3229,218 @@ function cargarEquiposFavoritos(){
 
 }
 
+
+function añadirFavorito($id,$tipoFavorito){
+    $entityM=cargar("admin");
+    
+    $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+    if($tipoFavorito=="jugador"){
+        $jugador=$entityM->find("Jugador",$id);
+       
+        $jugador->getUsuarios()->add($usuario);
+        $usuario->getJugadoresFavoritos()->add($jugador);
+        $entityM->persist($jugador);
+        $entityM->persist($usuario);
+        $entityM->flush();
+    }
+
+    else if($tipoFavorito=="tecnico"){
+        $tecnico=$entityM->find("CuerpoTecnico",$id);
+       
+        $tecnico->getUsuarios()->add($usuario);
+        $usuario->getTecnicosFavoritos()->add($tecnico);
+        $entityM->persist($tecnico);
+        $entityM->persist($usuario);
+        $entityM->flush();
+    }
+    else if($tipoFavorito=="equipo"){
+        $equipo=$entityM->find("Equipo",$id);
+       
+        $equipo->getUsuarios()->add($usuario);
+        $usuario->getEquiposFavoritos()->add($equipo);
+        $entityM->persist($equipo);
+        $entityM->persist($usuario);
+        $entityM->flush();
+    }
+
+
+}
+
+function eliminarFavorito($id,$tipoFavorito){
+    $entityM=cargar("admin");
+    
+    $usuario=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+    if($tipoFavorito=="jugador"){
+        $jugador=$entityM->find("Jugador",$id);
+       
+        $jugador->getUsuarios()->removeElement($usuario);
+        $usuario->getJugadoresFavoritos()->removeElement($jugador);
+        $entityM->persist($jugador);
+        $entityM->persist($usuario);
+        $entityM->flush();
+    }
+    else if($tipoFavorito=="tecnico"){
+        $tecnico=$entityM->find("CuerpoTecnico",$id);
+       
+        $tecnico->getUsuarios()->removeElement($usuario);
+        $usuario->getTecnicosFavoritos()->removeElement($tecnico);
+        $entityM->persist($tecnico);
+        $entityM->persist($usuario);
+        $entityM->flush();
+    }
+    else if($tipoFavorito=="equipo"){
+        $equipo=$entityM->find("Equipo",$id);
+       
+        $equipo->getUsuarios()->removeElement($usuario);
+        $usuario->getEquiposFavoritos()->removeElement($equipo);
+        $entityM->persist($equipo);
+        $entityM->persist($usuario);
+        $entityM->flush();
+    }
+}
+
+function cargarUsuarios(){
+    $entityM=cargar("admin");
+    $usuarios=$entityM->getRepository("Usuario")->findAll();
+    //usort($usuarios, fn($b, $a) => strcmp($b->getApellido1(), $a->getApellido1()));
+
+
+    usort($usuarios, function($a, $b) {
+        if ($a->getApellido1() == $b->getApellido1()) {
+            if ($a->getApellido2() == $b->getApellido2()) {
+                return $a->getNombre() < $b->getNombre() ? -1 : 1;
+            } else {
+                return 0;
+            }
+            return $a->getApellido2() < $b->getApellido2() ? -1 : 1;
+        }
+        return $a->getApellido1() < $b->getApellido1() ? -1 : 1;
+    });
+
+
+    $tiposUsuario=$entityM->getRepository("TipoUsuario")->findAll();
+    $usuarioActual=$entityM->find("Usuario",$_SESSION["usuario"]["id"]);
+    echo "<div class='table-responsive'>
+    <table class='table text-center border-top border-secondary border-right'>
+            <thead class='bg-primary'>
+            <th>Nombre completo</th>
+            <th>Email</th>
+            <th>Estado</th>
+            <th>Tipo de usuario</th>
+            </thead><tbody class='border-top border-right border-secondary'>";
+
+
+    foreach($usuarios as $usuario){
+        if($usuario!=$usuarioActual){
+        if($usuario->getEstado()=="NC"){
+            $estado="No confirmado";
+        }
+        else if($usuario->getEstado()=="D"){
+            $estado="Desactivado";
+        }
+        else {
+            $estado="Confirmado";
+        }
+
+        echo "<tr>
+        <td>".$usuario->getNombre()." ".$usuario->getApellido1()." ".$usuario->getApellido2()."</td>
+        <td>".$usuario->getEmail()."</td>
+        <td>$estado</td>
+        <td>
+        <select class='form-control border' onchange=cambiarTipoUsuario(".$usuario->getId().") id='selectUsuario".$usuario->getId()."'>
+        ";
+
+        foreach($tiposUsuario as $tipoUsuario){
+            if($tipoUsuario==$usuario->getTipoUsuario()){
+                echo "<option value='".$tipoUsuario->getId()."' selected>".ucfirst($tipoUsuario->getTipoUsuario())."</option>";
+            }
+            else {
+                echo "<option value='".$tipoUsuario->getId()."'>".ucfirst($tipoUsuario->getTipoUsuario())."</option>";
+            }
+        }
+
+
+        echo "</select>
+        </td>
+        </tr>";
+    }
+}
+            echo "</tbody></table></div>";
+}
+
+
+function cambiarTipoUsuario($idUsuario,$idTipoUsuario){
+    $entityM=cargar("admin");
+    $tipoUsuario=$entityM->find("TipoUsuario",$idTipoUsuario);
+    $usuario=$entityM->find("Usuario",$idUsuario);
+
+    $usuario->setTipoUsuario($tipoUsuario);
+    
+    if($tipoUsuario->getTipoUsuario()=="premium"){
+        if(is_null($usuario->getCaducidadSuscripcion()) or $usuario->getCaducidadSuscripcion()<date("Y-m-d")){
+        $fecha = new DateTime(date("Y-m-d"));
+        $fecha->modify('+1 month');
+        $usuario->setCaducidadSuscripcion(date_format($fecha,"Y-m-d"));
+    }
+}
+    
+    $entityM->flush();
+}
+
+
+function cargarPaisesOption(){
+    $entityM=cargar("admin");
+    $paises=$entityM->getRepository("Pais")->findAll();
+
+    foreach($paises as $pais){
+        echo "<option value='".$pais->getId()."'>".$pais->getNombre()."</option>";
+    }
+}
+
+function insertarClub(){
+    $entityM=cargar("admin");
+    $nombreCompleto=filter_input(INPUT_POST,"nombreCompleto");
+    $nombreCorto=filter_input(INPUT_POST,"nombreCorto");
+    $pais=$entityM->find("Pais",filter_input(INPUT_POST,"selectPaises"));
+    $fundacion=filter_input(INPUT_POST,"fundacion");
+
+
+    $club=new Club($nombreCompleto,$nombreCorto,$pais,$fundacion);
+    $entityM->persist($club);
+    $entityM->flush();
+}
+
+
+function cargarClubs(){
+    $entityM=cargar("admin");
+    $clubs=$entityM->getRepository("Club")->findAll();
+
+    foreach($clubs as $club){
+        echo "<option value='".$club->getId()."'>".$club->getNombreCompleto()."</option>";
+    }
+}
+
+function cargarTiposEquipoOption(){
+    $entityM=cargar("admin");
+    $tiposEquipo=$entityM->getRepository("TipoEquipo")->findAll();
+
+    foreach($tiposEquipo as $tipoEquipo){
+        echo "<option value='".$tipoEquipo->getId()."'>".$tipoEquipo->getTipo()."</option>";
+    }
+}
+
+function insertarEquipo(){
+    $entityM=cargar("admin");
+    $club=$entityM->find("Club",filter_input(INPUT_POST,"selectClubs"));
+    $tipoEquipo=$entityM->find("TipoEquipo",filter_input(INPUT_POST,"selectTipoEquipo"));
+    $competicion=$entityM->find("Competicion",filter_input(INPUT_POST,"selectCompeticion"));
+    $reputacion=filter_input(INPUT_POST,"reputacion");
+    $genero=filter_input(INPUT_POST,"selectGenero");
+    
+
+
+    $equipo=new Equipo($club,$tipoEquipo,$competicion,$reputacion,$genero,new Datetime(date("Y-m-d H:i:s")));
+    $entityM->persist($equipo);
+    $entityM->flush();
+}
 ?>

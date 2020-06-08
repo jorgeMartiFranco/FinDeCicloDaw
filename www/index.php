@@ -34,7 +34,7 @@ include "header.php";
 <div class='row text-right'>
         <div class="col form-group">
 
-<select class="form-control border col-lg-4 bg-primary" id="selectLibres">
+<select class="form-control border col bg-primary" id="selectLibres">
  <option value="masculino">Masculino</option>
  <option value="femenino">Femenino</option>
 </select>
@@ -98,7 +98,7 @@ include "header.php";
        <div class='row text-right'><div class='col'>
        <div class="form-group">
 
-<select class="form-control border col-lg-4 bg-primary" id="selectFichajes">
+<select class="form-control border col bg-primary" id="selectFichajes">
  <option value="masculino">Masculino</option>
  <option value="femenino">Femenino</option>
 </select>

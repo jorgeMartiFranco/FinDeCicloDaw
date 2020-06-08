@@ -56,6 +56,12 @@
       border-bottom:30px solid #0a0069 !important;
   }
 
+
+  tr:nth-child(even) 
+  {
+      background: #F1F1F1  !important;
+}
+
   
 
 

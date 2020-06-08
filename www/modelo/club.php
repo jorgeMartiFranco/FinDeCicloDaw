@@ -31,10 +31,11 @@ class Club {
      */
     private $pais;
     
-    function __construct($nombreCompleto, $nombreCorto, $pais) {
+    function __construct($nombreCompleto, $nombreCorto, $pais,$fundacion) {
         $this->nombreCompleto = $nombreCompleto;
         $this->nombreCorto = $nombreCorto;
         $this->pais = $pais;
+        $this->fundacion=$fundacion;
     }
     
     function getId() {

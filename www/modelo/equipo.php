@@ -20,7 +20,7 @@ class Equipo {
     private $reputacion;
 
     /**
-     * @ORM\Column(type="integer", name="Fecha_Sin_Entrenador")
+     * @ORM\Column(type="datetime", name="Fecha_Sin_Entrenador")
      */
     private $fechaSinEntrenador;
 
@@ -54,11 +54,13 @@ class Equipo {
     */
     private $usuarios;
     
-    function __construct($club, $tipoEquipo, $competicion,$reputacion) {
+    function __construct($club, $tipoEquipo, $competicion,$reputacion,$genero,$fechaSinEntrenador) {
         $this->club = $club;
         $this->tipoEquipo = $tipoEquipo;
         $this->competicion = $competicion;
         $this->reputacion=$reputacion;
+        $this->genero=$genero;
+        $this->fechaSinEntrenador=$fechaSinEntrenador;
         $this->cuerpoTecnico=new Doctrine\Common\Collections\ArrayCollection();
         $this->jugadores=new Doctrine\Common\Collections\ArrayCollection();
         $this->usuarios=new Doctrine\Common\Collections\ArrayCollection();
